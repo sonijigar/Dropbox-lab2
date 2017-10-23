@@ -24,22 +24,48 @@ module.exports = function(passport) {
             done(e,{});
         }
     }));
-    
-    passport.use('signup', new LocalStrategy(function(username, password, done){
-        try{
+
+    passport.use('signup', new LocalStrategy(function(username   , password, done) {
+        try {
             mongo.connect(mongoURL, function(){
-                console.log('Conected to mongo at: ' + mongoURL);
+                console.log('Connected to mongo at: ' + mongoURL);
                 var coll = mongo.collection('login');
 
-                coll.insertOne({username: username, password: password}, function (err, user) {
+                coll.insertOne({username: username, password:password}, function(err, user){
+                    if (user) {
+                        done(null, {username: username, password: password});
 
-                })
-            })
+                    } else {
+                        done(null, false);
+                    }
+                });
+            });
         }
-        catch(e){
-            done(e, {})
+        catch (e){
+            done(e,{});
         }
-    }))
+    }));
+    
+    // passport.use('signup', new LocalStrategy(function(username, password, done){
+    //     try{
+    //         mongo.connect(mongoURL, function(){
+    //             console.log('Conected to mongo at: ' + mongoURL);
+    //             var coll = mongo.collection('login');
+    //
+    //             coll.findOne({username: username, password: password}, function (err, user) {
+    //                 if(user){
+    //                     done(null, user);
+    //                 }
+    //                 else{
+    //                     done(null);
+    //                 }
+    //             })
+    //         })
+    //     }
+    //     catch(e){
+    //         done(e, {})
+    //     }
+    // }))
 };
 
 

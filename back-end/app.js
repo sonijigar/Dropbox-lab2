@@ -60,6 +60,18 @@ app.post('/logout', function(req,res) {
 // app.post('/signup', function(req, res){
 //     pasport
 // })
+app.post('/signup', function(req, res){
+    passport.authenticate('signup', function(err, user){
+        if(err){
+            res.status(500).send();
+        }
+        else{
+            req.session.user = user.username;
+            return res.status(201).send({username:"test"});
+        }
+    })(req, res)
+});
+
 app.post('/login', function(req, res) {
     console.log('sess:', req.session.user);
     passport.authenticate('login', function(err, user) {

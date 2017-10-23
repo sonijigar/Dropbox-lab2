@@ -4,6 +4,7 @@ import * as API from '../api/API';
 import Login from "./Login";
 import Message from "./Message";
 import Welcome from "./Welcome";
+import Signup from "./Signup"
 
 class NewerHomePage extends Component {
 
@@ -11,6 +12,29 @@ class NewerHomePage extends Component {
         isLoggedIn: false,
         message: '',
         username: ''
+    };
+
+    handleSignUp = (userdata) => {
+        console.log("here")
+        API.doSignUp(userdata)
+            .then((status) => {
+                if (status === 201) {
+                    console.log("here");
+                    this.setState({
+                        isLoggedIn: true,
+                        message: "Welcome to my App..!!",
+                        username: userdata.username
+                    });
+
+                    this.props.history.push("/welcome");
+                } else if (status === 401) {
+                    console.log("here");
+                    this.setState({
+                        isLoggedIn: false,
+                        message: "Wrong username or password. Try again..!!"
+                    });
+                }
+            });
     };
 
     handleSubmit = (userdata) => {
@@ -59,6 +83,17 @@ class NewerHomePage extends Component {
                         }}>
                             Login
                         </button>
+                        <button className="btn btn-success" onClick={() => {
+                            this.props.history.push("/signup");
+                        }}>
+                            Signup
+                        </button>
+                    </div>
+                )}/>
+                <Route exact path="/signup" render={() => (
+                    <div>
+                        <Signup handleSignUp={this.handleSignUp}/>
+                        <Message message={this.state.message}/>
                     </div>
                 )}/>
 

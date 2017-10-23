@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import { Route, Redirect } from 'react-router'
+import NewerHomePage from "./NewerHomePage";
+import Login from "./Login";
 
 class Welcome extends Component {
 
@@ -23,8 +26,9 @@ class Welcome extends Component {
         document.title = `Welcome, ${window.sessionStorage.getItem("key")} !!`;
     }
 
-    render(){
-        return(
+    render() {
+        if (window.sessionStorage.getItem("key")) {
+        return (
             <div className="row justify-content-md-center">
                 <div className="col-md-3">
                     <div className="alert alert-warning" role="alert">
@@ -39,6 +43,12 @@ class Welcome extends Component {
                 </div>
             </div>
         )
+    }
+    else{
+            return(
+            <Redirect to ="/"/>
+                )
+        }
     }
 }
 
