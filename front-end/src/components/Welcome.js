@@ -1,8 +1,12 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router'
-import NewerHomePage from "./NewerHomePage";
-import Login from "./Login";
+import * as API from '../api/API';
+import Navbar from './Navbar'
+import RaisedButton from 'material-ui/RaisedButton';
+const style = {
+    margin: 12,
+};
 
 class Welcome extends Component {
 
@@ -10,6 +14,15 @@ class Welcome extends Component {
         username: PropTypes.string.isRequired,
         handleLogout: PropTypes.func.isRequired
     };
+    //
+    // handleLoad = () => {
+    //     API.doCheck()
+    //         .then((status)=>{
+    //         if(status === 201){
+    //             this.props.history.push('/welcome')
+    //         }
+    //         })
+    // }
 
     state = {
         username : ''
@@ -23,23 +36,44 @@ class Welcome extends Component {
     }
 
     componentDidMount(){
-        document.title = `Welcome, ${window.sessionStorage.getItem("key")} !!`;
+        // window.addEventListener('load', this.handleLoad);
+        document.title = `Home-Dropbox`;
     }
 
     render() {
         if (window.sessionStorage.getItem("key")) {
         return (
-            <div className="row justify-content-md-center">
-                <div className="col-md-3">
-                    <div className="alert alert-warning" role="alert">
-                        {window.sessionStorage.getItem("key")}, welcome to my App..!!
+            <div>
+                <div style={{float: 'left', width:'22%', height:'100%   '}}>
+                <Navbar/>
+                </div>
+            <div style={{float:'left', width:'55%'}}>
+                    <div role="alert">
+                        <div>
+                            &nbsp;
+                            &nbsp;
+                            &nbsp;
+                        </div>
+                        <div>
+                            &nbsp;
+                            &nbsp;
+                            &nbsp;
+                        </div>
+                        <div >
+                            <strong>username</strong>: {window.sessionStorage.getItem("key")}<br />
+                        <strong>email</strong>: {window.sessionStorage.getItem("email")} <br />
+                        <strong>phone</strong>: {window.sessionStorage.getItem("phone")} <br />
+                        </div>
                     </div>
-                    <button
-                        className="btn btn-danger"
+
+            </div>
+                <div style={{float:'right'}}>
+                    <RaisedButton
+                        label="Logout"
+                        style={style}
                         type="button"
-                        onClick={() => this.props.handleLogout(this.state)}>
-                        Logout
-                    </button>
+                        onClick={() => this.props.handleLogout(this.state)}/>
+
                 </div>
             </div>
         )

@@ -4,8 +4,12 @@ import * as API from '../api/API';
 import Login from "./Login";
 import Message from "./Message";
 import Welcome from "./Welcome";
-import Signup from "./Signup"
-
+import Signup from "./Signup";
+import Land from "./Land"
+import RaisedButton from 'material-ui/RaisedButton';
+    const style = {
+        margin: 12,
+    };
 class NewerHomePage extends Component {
 
     state = {
@@ -23,7 +27,9 @@ class NewerHomePage extends Component {
                     this.setState({
                         isLoggedIn: true,
                         message: "Welcome to my App..!!",
-                        username: userdata.username
+                        username: userdata.username,
+                        email: userdata.email,
+                        phone: userdata.phone
                     });
 
                     this.props.history.push("/welcome");
@@ -40,8 +46,13 @@ class NewerHomePage extends Component {
     handleSubmit = (userdata) => {
         API.doLogin(userdata)
             .then((status) => {
-                if (status === 201) {
-                    console.log(userdata);
+            console.log(status);
+                if (status.username != "a") {
+                    console.log("here");
+                    window.sessionStorage.setItem("email", status.email);
+                    window.sessionStorage.setItem("phone", status.phone)
+                    window.sessionStorage.setItem("key", status.username);
+
                     this.setState({
                         isLoggedIn: true,
                         message: "Welcome to my App..!!",
@@ -49,7 +60,7 @@ class NewerHomePage extends Component {
                     });
 
                     this.props.history.push("/welcome");
-                } else if (status === 401) {
+                } else {
                     this.setState({
                         isLoggedIn: false,
                         message: "Wrong username or password. Try again..!!"
@@ -77,17 +88,14 @@ class NewerHomePage extends Component {
             <div className="container-fluid">
                 <Route exact path="/" render={() => (
                     <div>
-                        <Message message="You have landed on my App !!"/>
-                        <button className="btn btn-success" onClick={() => {
+                        <Land/>
+                        <Message message=""/>
+                        <RaisedButton style={style} label = "Login" onClick={() => {
                             this.props.history.push("/login");
-                        }}>
-                            Login
-                        </button>
-                        <button className="btn btn-success" onClick={() => {
+                        }}/>
+                        <RaisedButton label="Sign Up" onClick={() => {
                             this.props.history.push("/signup");
-                        }}>
-                            Signup
-                        </button>
+                        }}/>
                     </div>
                 )}/>
                 <Route exact path="/signup" render={() => (

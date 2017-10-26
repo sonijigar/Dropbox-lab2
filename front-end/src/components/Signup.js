@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-
+import RaisedButton from 'material-ui/RaisedButton';
+const style = {
+    margin: 12,
+};
 class Signup extends Component {
 
     static propTypes = {
@@ -9,13 +12,17 @@ class Signup extends Component {
 
     state = {
         username: '',
-        password: ''
+        password: '',
+        email: '',
+        phone:''
     };
 
     componentWillMount(){
         this.setState({
             username: '',
-            password: ''
+            password: '',
+            email: '',
+            phone:''
         });
     }
 
@@ -39,7 +46,37 @@ class Signup extends Component {
                                         username: event.target.value
                                     });
                                 }}
-                            />
+                            required/>
+                        </div>
+
+                        <div className="form-group">
+                            <input
+                                className="form-control"
+                                type="email"
+                                label="Email"
+                                placeholder="Enter Email"
+                                value={this.state.email}
+                                onChange={(event) => {
+                                    this.setState({
+                                        email: event.target.value
+                                    });
+                                }}
+                            required/>
+                        </div>
+
+                        <div className="form-group">
+                            <input
+                                className="form-control"
+                                type="number"
+                                label="Phone number"
+                                placeholder="Enter Phone"
+                                value={this.state.phone}
+                                onChange={(event) => {
+                                    this.setState({
+                                        phone: event.target.value
+                                    });
+                                }}
+                            rquired/>
                         </div>
 
                         <div className="form-group">
@@ -54,15 +91,14 @@ class Signup extends Component {
                                         password: event.target.value
                                     });
                                 }}
-                            />
+                            required/>
                         </div>
                         <div className="form-group">
-                            <button
-                                className="btn btn-primary"
-                                type="button"
-                                onClick={() => this.props.handleSignUp(this.state)}>
-                                Submit
-                            </button>
+                            <RaisedButton
+                                label="submit"
+                                style={style}
+                                type="submit"
+                                onClick={() => this.props.handleSignUp(this.state)}/>
                         </div>
                     </form>
                 </div>

@@ -12,7 +12,8 @@ module.exports = function(passport) {
 
                 coll.findOne({username: username, password:password}, function(err, user){
                     if (user) {
-                        done(null, {username: username, password: password});
+                        console.log("user::", user);
+                        done(null, user);
 
                     } else {
                         done(null, false);

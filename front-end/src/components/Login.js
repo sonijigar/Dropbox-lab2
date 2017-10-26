@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-
+import RaisedButton from 'material-ui/RaisedButton';
+const style = {
+    margin: 12,
+};
 class Login extends Component {
 
     static propTypes = {
@@ -57,12 +60,12 @@ class Login extends Component {
                             />
                         </div>
                         <div className="form-group">
-                            <button
-                                className="btn btn-primary"
+                            <RaisedButton
+                                style={style}
+                                label="Submit"
                                 type="button"
-                                onClick={() => this.props.handleSubmit(this.state)}>
-                                Submit
-                            </button>
+                                onClick={() => this.props.handleSubmit(this.state)}/>
+
                         </div>
                     </form>
                 </div>

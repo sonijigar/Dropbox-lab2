@@ -13,6 +13,8 @@ export const doSignUp = (payload) =>
         credentials:'include',
         body:JSON.stringify(payload)
     }).then(res => {
+        window.sessionStorage.setItem("email", payload.email);
+        window.sessionStorage.setItem("phone", payload.phone)
         window.sessionStorage.setItem("key", payload.username);
         return res.status;
     })
@@ -30,9 +32,15 @@ export const doLogin = (payload) =>
         credentials:'include',
         body: JSON.stringify(payload)
     }).then(res => {
-        console.log("respon", window)
-        window.sessionStorage.setItem("key", payload.username);
-        return res.status;
+        //console.log("respon", res.json())
+        // var ob = res.json();
+        // console.log(ob);
+        // console.log("abc")
+        // window.sessionStorage.setItem("key", payload.username);
+        // window.sessionStorage.setItem("email", ob.email);
+        // window.sessionStorage.setItem("phone", payload.phone);
+        // return res.status;
+        return res.json();
     })
         .catch(error => {
             console.log("This is error");
@@ -48,6 +56,8 @@ export const logout = () =>
         credentials:'include'
     }).then(res => {
         window.sessionStorage.removeItem('key');
+        window.sessionStorage.removeItem('email');
+        window.sessionStorage.removeItem('phone');
         return res.status;
         //  res.data;
     })

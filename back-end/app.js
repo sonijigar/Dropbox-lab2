@@ -6,7 +6,9 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var cors = require('cors');
 require('./routes/passport')(passport);
+var mongoURL = "mongodb://localhost:27017/login";
 
+var mongo = require("./routes/mongo");
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var mongoSessionURL = "mongodb://localhost:27017/login";
@@ -60,16 +62,20 @@ app.post('/logout', function(req,res) {
 // app.post('/signup', function(req, res){
 //     pasport
 // })
-app.post('/signup', function(req, res){
-    passport.authenticate('signup', function(err, user){
-        if(err){
-            res.status(500).send();
-        }
-        else{
-            req.session.user = user.username;
-            return res.status(201).send({username:"test"});
-        }
-    })(req, res)
+app.post('/signup', function(req, res) {
+    mongo.connect(mongoURL, function () {
+        console.log('Connected to mongo at: ' + mongoURL);
+        var coll = mongo.collection('login');
+
+        coll.insertOne({username: req.body.username, password: req.body.password, email:req.body.email, phone:req.body.phone}, function (err, user) {
+            if (user) {
+                res.status(201).send({user});
+
+            } else {
+                res.status(400).send();
+            }
+        });
+    });
 });
 
 app.post('/login', function(req, res) {
@@ -84,9 +90,10 @@ app.post('/login', function(req, res) {
         }
         else{
             req.session.user = user.username;
+            //req.session.cookie.maxAge = 1 * 20 * 1000;
             console.log('sessionssss:::', req.session);
             console.log("session initilized");
-            return res.status(201).send({username:"test"});
+            return res.status(201).json(user);
         }
 
     })(req, res);
