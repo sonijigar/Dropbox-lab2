@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import RaisedButton from 'material-ui/RaisedButton';
+import { Route, withRouter } from 'react-router-dom';
+import * as API from '../api/API';
 const style = {
     margin: 12,
 };
@@ -15,7 +17,22 @@ class Login extends Component {
         password: ''
     };
 
+    handleLoad = () => {
+        API.doCheck()
+            .then((status)=>{
+                console.log(status)
+                if(status === 201){
+                    this.props.history.push("/welcome");
+                }
+                else{
+                    //  <Redirect to="/"/>
+                    this.props.history.push("/login");
+                }
+            })
+    }
+
     componentWillMount(){
+        window.addEventListener('load', this.handleLoad);
         this.setState({
             username: '',
             password: ''
@@ -74,4 +91,4 @@ class Login extends Component {
     }
 }
 
-export default Login;
+export default withRouter(Login);

@@ -7,6 +7,7 @@ var passport = require('passport');
 var cors = require('cors');
 require('./routes/passport')(passport);
 var mongoURL = "mongodb://localhost:27017/login";
+var kafka = require('./routes/kafka/client');
 
 var mongo = require("./routes/mongo");
 var routes = require('./routes/index');
@@ -63,21 +64,44 @@ app.post('/logout', function(req,res) {
 //     pasport
 // })
 app.post('/signup', function(req, res) {
-    mongo.connect(mongoURL, function () {
-        console.log('Connected to mongo at: ' + mongoURL);
-        var coll = mongo.collection('login');
+    // mongo.connect(mongoURL, function () {
+    //     console.log('Connected to mongo at: ' + mongoURL);
+    //     var coll = mongo.collection('login');
+    //
+    //     coll.insertOne({username: req.body.username, password: req.body.password, email:req.body.email, phone:req.body.phone}, function (err, user) {
+    //         if (user) {
+    //             res.status(201).send({user});
+    //
+    //         } else {
+    //             res.status(400).send();
+    //         }
+    //     });
+    // });
 
-        coll.insertOne({username: req.body.username, password: req.body.password, email:req.body.email, phone:req.body.phone}, function (err, user) {
-            if (user) {
-                res.status(201).send({user});
-
-            } else {
-                res.status(400).send();
-            }
-        });
-    });
+    kafka.make_request('login_topic', {"username":req.body.username, "password":req.body.password, "email":req.body.email, "phone":req.body.phone}, function(err, results){
+        if (results.code == 200) {
+            //done(null, results.user);
+            console.log(results);
+            var ob = results.user;
+            ob.stat = "logged in";
+            res.status(201).json(ob);
+        }
+        else {
+            res.status(400).send();
+        }
+    })
 });
 
+app.post('/check', function(req, res){
+    if(req.session && req.session.cookie.expires){
+        console.log(req.session.cookie);
+        res.status(201).send();
+
+    }
+    else{
+        res.status(401).send();
+    }
+})
 app.post('/login', function(req, res) {
     console.log('sess:', req.session.user);
     passport.authenticate('login', function(err, user) {
@@ -90,10 +114,13 @@ app.post('/login', function(req, res) {
         }
         else{
             req.session.user = user.username;
-            //req.session.cookie.maxAge = 1 * 20 * 1000;
+            req.session.cookie.maxAge = 30 * 60 * 1000;
             console.log('sessionssss:::', req.session);
             console.log("session initilized");
-            return res.status(201).json(user);
+            var obj = user;
+            obj.stat = "logged in";
+            console.log(obj);
+            return res.status(201).json(obj);
         }
 
     })(req, res);

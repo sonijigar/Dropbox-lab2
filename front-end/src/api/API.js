@@ -4,6 +4,7 @@ const headers = {
     'Accept': 'application/json'
 };
 export const doSignUp = (payload) =>
+    
     fetch(`${api}/signup`, {
         method: 'POST',
         headers:{
@@ -13,15 +14,31 @@ export const doSignUp = (payload) =>
         credentials:'include',
         body:JSON.stringify(payload)
     }).then(res => {
-        window.sessionStorage.setItem("email", payload.email);
-        window.sessionStorage.setItem("phone", payload.phone)
-        window.sessionStorage.setItem("key", payload.username);
-        return res.status;
+        // window.sessionStorage.setItem("email", payload.email);
+        // window.sessionStorage.setItem("phone", payload.phone)
+        // window.sessionStorage.setItem("key", payload.username);
+        return res.json();
     })
         .catch(error => {
             console.log("This is error");
             return error;
         });
+
+export const doCheck = () =>
+    fetch(`${api}/check`, {
+        method: 'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        credentials:'include',
+
+    }).then(res =>{
+        return res.status;
+    }).catch(error => {
+        console.log("some error");
+        return error;
+    })
 export const doLogin = (payload) =>
     fetch(`${api}/login`, {
         method: 'POST',
@@ -40,6 +57,7 @@ export const doLogin = (payload) =>
         // window.sessionStorage.setItem("email", ob.email);
         // window.sessionStorage.setItem("phone", payload.phone);
         // return res.status;
+        console.log("response", res.json());
         return res.json();
     })
         .catch(error => {

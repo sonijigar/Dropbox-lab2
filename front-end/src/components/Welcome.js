@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { Route, Redirect } from 'react-router'
+import { Route, withRouter } from 'react-router-dom';
 import * as API from '../api/API';
 import Navbar from './Navbar'
 import RaisedButton from 'material-ui/RaisedButton';
@@ -14,21 +14,51 @@ class Welcome extends Component {
         username: PropTypes.string.isRequired,
         handleLogout: PropTypes.func.isRequired
     };
+
+    // onBackButtonEvent = () => {
+    //     e.preventDefault();
+    //     if(true){
+    //         window.history.go(0);
+    //     }else {
+    //         window.history.forward();
+    //     }
+    // }
     //
-    // handleLoad = () => {
+    // onBackButtonEvent = () => {
     //     API.doCheck()
     //         .then((status)=>{
-    //         if(status === 201){
-    //             this.props.history.push('/welcome')
-    //         }
+    //             console.log(status)
+    //             if(status === 201){
+    //                 this.props.history.go(0);
+    //             }
+    //             else{
+    //                 //  <Redirect to="/"/>
+    //                 this.props.history.push("/login");
+    //             }
     //         })
     // }
+
+    handleLoad = () => {
+        API.doCheck()
+            .then((status)=>{
+            console.log(status)
+            if(status === 201){
+                this.props.history.push("/welcome");
+            }
+            else{
+              //  <Redirect to="/"/>
+                this.props.history.push("/login");
+            }
+            })
+    }
 
     state = {
         username : ''
     };
 
     componentWillMount(){
+        window.addEventListener('load', this.handleLoad);
+        //window.addEventListener('popstate',this.onBackButtonEvent);
         this.setState({
             username : this.props.username
         });
@@ -36,7 +66,6 @@ class Welcome extends Component {
     }
 
     componentDidMount(){
-        // window.addEventListener('load', this.handleLoad);
         document.title = `Home-Dropbox`;
     }
 
@@ -80,10 +109,11 @@ class Welcome extends Component {
     }
     else{
             return(
-            <Redirect to ="/"/>
+            //<Redirect to ="/"/>
+                this.props.history.push("/")
                 )
         }
     }
 }
 
-export default Welcome;
+export default withRouter(Welcome);

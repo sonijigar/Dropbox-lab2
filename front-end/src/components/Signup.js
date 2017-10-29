@@ -46,13 +46,13 @@ class Signup extends Component {
                                         username: event.target.value
                                     });
                                 }}
-                            required/>
+                            />
                         </div>
 
                         <div className="form-group">
                             <input
                                 className="form-control"
-                                type="email"
+                                type="text"
                                 label="Email"
                                 placeholder="Enter Email"
                                 value={this.state.email}
@@ -61,13 +61,13 @@ class Signup extends Component {
                                         email: event.target.value
                                     });
                                 }}
-                            required/>
+                            />
                         </div>
 
                         <div className="form-group">
                             <input
                                 className="form-control"
-                                type="number"
+                                type="text"
                                 label="Phone number"
                                 placeholder="Enter Phone"
                                 value={this.state.phone}
@@ -76,7 +76,7 @@ class Signup extends Component {
                                         phone: event.target.value
                                     });
                                 }}
-                            rquired/>
+                            />
                         </div>
 
                         <div className="form-group">
@@ -91,13 +91,13 @@ class Signup extends Component {
                                         password: event.target.value
                                     });
                                 }}
-                            required/>
+                            />
                         </div>
                         <div className="form-group">
                             <RaisedButton
                                 label="submit"
                                 style={style}
-                                type="submit"
+                                type="button"
                                 onClick={() => this.props.handleSignUp(this.state)}/>
                         </div>
                     </form>

@@ -22,8 +22,11 @@ class NewerHomePage extends Component {
         console.log("here")
         API.doSignUp(userdata)
             .then((status) => {
-                if (status === 201) {
-                    console.log("here");
+                if (status.stat === "logged in") {
+                    console.log(status);
+                    window.sessionStorage.setItem("email", status.email);
+                    window.sessionStorage.setItem("phone", status.phone)
+                    window.sessionStorage.setItem("key", status.username);
                     this.setState({
                         isLoggedIn: true,
                         message: "Welcome to my App..!!",
@@ -33,7 +36,7 @@ class NewerHomePage extends Component {
                     });
 
                     this.props.history.push("/welcome");
-                } else if (status === 401) {
+                } else {
                     console.log("here");
                     this.setState({
                         isLoggedIn: false,
@@ -46,8 +49,8 @@ class NewerHomePage extends Component {
     handleSubmit = (userdata) => {
         API.doLogin(userdata)
             .then((status) => {
-            console.log(status);
-                if (status.username != "a") {
+            console.log("stat", status);
+                if (status.stat === 'logged in') {
                     console.log("here");
                     window.sessionStorage.setItem("email", status.email);
                     window.sessionStorage.setItem("phone", status.phone)
@@ -74,9 +77,7 @@ class NewerHomePage extends Component {
         API.logout()
             .then((status) => {
                 if(status === 200){
-                    this.setState({
-                        isLoggedIn: false
-                    });
+
                     this.props.history.push("/");
                 }
             });
