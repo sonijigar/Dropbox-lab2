@@ -78,7 +78,7 @@ app.post('/signup', function(req, res) {
     //     });
     // });
 
-    kafka.make_request('login_topic', {"username":req.body.username, "password":req.body.password, "email":req.body.email, "phone":req.body.phone}, function(err, results){
+    kafka.make_request('login_topic', {"operation":"signup","username":req.body.username, "password":req.body.password, "email":req.body.email, "phone":req.body.phone}, function(err, results){
         if (results.code == 200) {
             //done(null, results.user);
             console.log(results);

@@ -57,7 +57,7 @@ export const doLogin = (payload) =>
         // window.sessionStorage.setItem("email", ob.email);
         // window.sessionStorage.setItem("phone", payload.phone);
         // return res.status;
-        console.log("response", res.json());
+        console.log("response", res);
         return res.json();
     })
         .catch(error => {

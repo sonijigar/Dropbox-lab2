@@ -37,20 +37,42 @@ consumer.on('message', function (message) {
     console.log(JSON.stringify(message.value));
     var data = JSON.parse(message.value);
     console.log(data);
-    login.handleSignUp(data.data, function(err,res){
-        console.log('after handle'+res);
+if(data.data.operation == "signup"){
+    login.handleSignUp(data.data, function (err, res) {
+        console.log('after handle' + res);
         var payloads = [
-            { topic: data.replyTo,
-                messages:JSON.stringify({
-                    correlationId:data.correlationId,
-                    data : res
+            {
+                topic: data.replyTo,
+                messages: JSON.stringify({
+                    correlationId: data.correlationId,
+                    data: res
                 }),
-                partition : 0
+                partition: 0
             }
         ];
-        producer.send(payloads, function(err, data){
+        producer.send(payloads, function (err, data) {
             console.log(data);
         });
         return;
     });
+}
+else if(data.data.operation == "login"){
+    login.handle_request(data.data, function (err, res) {
+        console.log('after handle' + res);
+        var payloads = [
+            {
+                topic: data.replyTo,
+                messages: JSON.stringify({
+                    correlationId: data.correlationId,
+                    data: res
+                }),
+                partition: 0
+            }
+        ];
+        producer.send(payloads, function (err, data) {
+            console.log(data);
+        });
+        return;
+    });
+}
 });
