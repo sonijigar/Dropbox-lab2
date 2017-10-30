@@ -64,21 +64,7 @@ app.post('/logout', function(req,res) {
 //     pasport
 // })
 app.post('/signup', function(req, res) {
-    // mongo.connect(mongoURL, function () {
-    //     console.log('Connected to mongo at: ' + mongoURL);
-    //     var coll = mongo.collection('login');
-    //
-    //     coll.insertOne({username: req.body.username, password: req.body.password, email:req.body.email, phone:req.body.phone}, function (err, user) {
-    //         if (user) {
-    //             res.status(201).send({user});
-    //
-    //         } else {
-    //             res.status(400).send();
-    //         }
-    //     });
-    // });
-
-    kafka.make_request('login_topic', {"operation":"signup","username":req.body.username, "password":req.body.password, "email":req.body.email, "phone":req.body.phone}, function(err, results){
+   kafka.make_request('signup_topic', {"operation":"signup","username":req.body.username, "password":req.body.password, "email":req.body.email, "phone":req.body.phone}, function(err, results){
         if (results.code == 200) {
             //done(null, results.user);
             console.log(results);
@@ -91,6 +77,8 @@ app.post('/signup', function(req, res) {
         }
     })
 });
+
+
 
 app.post('/check', function(req, res){
     if(req.session && req.session.cookie.expires){

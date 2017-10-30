@@ -5,8 +5,8 @@ function ConnectionProvider() {
         if (!this.kafkaConsumerConnection) {
 
             this.client = new kafka.Client("localhost:2181");
-            this.kafkaConsumerConnection = new kafka.Consumer(this.client,[ { topic: topic_name, partition: 0 }]);
-            this.client.on('ready', function () { console.log('client ready!') })
+            this.kafkaConsumerConnection = new kafka.HighLevelConsumer(this.client,[ { topic: topic_name, partition: 0 }, {topic: 'signup_topic', partition:0 }]);
+            this.client.on('ready', function () { console.log(topic_name); console.log('client ready!') })
         }
         return this.kafkaConsumerConnection;
     };
