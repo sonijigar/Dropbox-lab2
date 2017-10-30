@@ -4,6 +4,7 @@ import { Route, withRouter } from 'react-router-dom';
 import * as API from '../api/API';
 import Navbar from './Navbar'
 import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
 const style = {
     margin: 12,
 };
@@ -38,6 +39,24 @@ class Welcome extends Component {
     //         })
     // }
 
+    handleFileUpload = (event) => {
+        const payload = new FormData();
+
+        payload.append('file', event.target.files[0]);
+
+        API.uploadFile(payload)
+            .then((status) => {
+                if (status === 204) {
+                    // API.getImages()
+                    //     .then((data) => {
+                    //         this.setState({
+                    //             images: data
+                    //         });
+                    //     });
+                    console.log("file sent");
+                }
+            });
+}
     handleLoad = () => {
         API.doCheck()
             .then((status)=>{
@@ -102,6 +121,13 @@ class Welcome extends Component {
                         style={style}
                         type="button"
                         onClick={() => this.props.handleLogout(this.state)}/>
+
+                    <TextField
+                        className={'fileupload'}
+                        type="file"
+                        name="mypic"
+                        onChange={this.handleFileUpload}
+                    />
 
                 </div>
             </div>

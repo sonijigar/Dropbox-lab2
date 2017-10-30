@@ -12,6 +12,7 @@ var kafka = require('./routes/kafka/client');
 var mongo = require("./routes/mongo");
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var file = require('./routes/files');
 var mongoSessionURL = "mongodb://localhost:27017/login";
 var expressSessions = require("express-session");
 var mongoStore = require("connect-mongo/es5")(expressSessions);
@@ -52,6 +53,7 @@ app.use(passport.initialize());
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/files', file)
 
 app.post('/logout', function(req,res) {
     console.log(req.session.user);

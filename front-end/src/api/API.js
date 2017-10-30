@@ -83,3 +83,14 @@ export const logout = () =>
             console.log("This is error");
             return error;
         });
+
+export const uploadFile = (payload) =>
+    fetch(`${api}/files/upload`, {
+        method: 'POST',
+        body: payload
+    }).then(res => {
+        return res.status;
+    }).catch(error => {
+        console.log("This is error");
+        return error;
+    });
