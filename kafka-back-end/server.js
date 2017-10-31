@@ -72,6 +72,24 @@ consumer.on('message', function (message) {
             return;
         });
     }
+    else if(data.data.operation == "list"){
+        file.list(data.data, function(err, res){
+            var payloads = [
+                {
+                    topic:data.replyTo,
+                    messages:JSON.stringify({
+                        correlationId:data.correlationId,
+                        data:res
+                    }),
+                    partition:0
+                }
+            ];
+            producer.send(payloads, function(err, data){
+                console.log(data);
+            });
+            return;
+        });
+    }
 });
 
 
