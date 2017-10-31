@@ -2,12 +2,13 @@ var kafka = require('kafka-node');
 
 function ConnectionProvider() {
     this.getConsumer = function(topic_name) {
-        if (!this.kafkaConsumerConnection) {
-
+         if (!this.kafkaConsumerConnection) {
+        //
             this.client = new kafka.Client("localhost:2181");
-            this.kafkaConsumerConnection = new kafka.HighLevelConsumer(this.client,[ { topic: topic_name, partition: 0 }, {topic: 'signup_topic', partition:0 }]);
+            this.kafkaConsumerConnection = new kafka.HighLevelConsumer(this.client,[ { topic: topic_name[0], partition: 0 }, {topic: topic_name[1], partition:0 }, {topic: topic_name[2], partition:0 }]);
             this.client.on('ready', function () { console.log(topic_name); console.log('client ready!') })
-        }
+         }
+
         return this.kafkaConsumerConnection;
     };
 

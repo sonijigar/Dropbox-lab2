@@ -84,7 +84,8 @@ app.post('/signup', function(req, res) {
 
 app.post('/check', function(req, res){
     if(req.session && req.session.cookie.expires){
-        console.log(req.session.cookie);
+        console.log("session:",req.session);
+
         res.status(201).send();
 
     }
@@ -103,7 +104,7 @@ app.post('/login', function(req, res) {
             res.status(401).send();
         }
         else{
-            req.session.user = user.username;
+            req.session.user = user;
             req.session.cookie.maxAge = 30 * 60 * 1000;
             console.log('sessionssss:::', req.session);
             console.log("session initilized");

@@ -5,6 +5,7 @@ import * as API from '../api/API';
 import Navbar from './Navbar'
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import FileGridList from './FileGridList'
 const style = {
     margin: 12,
 };
@@ -47,12 +48,12 @@ class Welcome extends Component {
         API.uploadFile(payload)
             .then((status) => {
                 if (status === 204) {
-                    // API.getImages()
-                    //     .then((data) => {
-                    //         this.setState({
-                    //             images: data
-                    //         });
-                    //     });
+                     API.getFiles()
+                         .then((data) => {
+                             this.setState({
+                                 files: data
+                             });
+                         });
                     console.log("file sent");
                 }
             });
@@ -70,10 +71,17 @@ class Welcome extends Component {
             }
             })
     }
+    constructor() {
+        super();
+        this.state = {
+            files: [],
+            username : ''
+        };
+    }
 
-    state = {
-        username : ''
-    };
+    // state = {
+    //     username : ''
+    // };
 
     componentWillMount(){
         window.addEventListener('load', this.handleLoad);
@@ -86,6 +94,13 @@ class Welcome extends Component {
 
     componentDidMount(){
         document.title = `Home-Dropbox`;
+        API.getFiles()
+            .then((data) => {
+                console.log(data);
+                this.setState({
+                    files: data
+                });
+            });
     }
 
     render() {
@@ -111,6 +126,9 @@ class Welcome extends Component {
                             <strong>username</strong>: {window.sessionStorage.getItem("key")}<br />
                         <strong>email</strong>: {window.sessionStorage.getItem("email")} <br />
                         <strong>phone</strong>: {window.sessionStorage.getItem("phone")} <br />
+                        </div>
+                        <div>
+                            <FileGridList files={this.state.files}/>
                         </div>
                     </div>
 

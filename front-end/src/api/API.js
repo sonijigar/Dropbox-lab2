@@ -49,15 +49,6 @@ export const doLogin = (payload) =>
         credentials:'include',
         body: JSON.stringify(payload)
     }).then(res => {
-        //console.log("respon", res.json())
-        // var ob = res.json();
-        // console.log(ob);
-        // console.log("abc")
-        // window.sessionStorage.setItem("key", payload.username);
-        // window.sessionStorage.setItem("email", ob.email);
-        // window.sessionStorage.setItem("phone", payload.phone);
-        // return res.status;
-        console.log("response", res);
         return res.json();
     })
         .catch(error => {
@@ -84,9 +75,20 @@ export const logout = () =>
             return error;
         });
 
+export const getFiles = () =>
+    fetch(`${api}/files/list`,{
+        method: 'POST',
+        credentials:'include',
+
+    }).then(res => res.json())
+      .catch(error =>{
+        console.log(error);
+        return error;
+    })
 export const uploadFile = (payload) =>
     fetch(`${api}/files/upload`, {
         method: 'POST',
+        credentials:'include',
         body: payload
     }).then(res => {
         return res.status;

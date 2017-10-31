@@ -82,24 +82,6 @@ function handleSignUp(msg, callback){
     // }
     // callback(null, res);
 }
-function handleSignUp2(msg, callback){
-    mongo.connect(mongoURL, function () {
-        console.log('Connected to mongo at: ' + mongoURL);
-        var coll = mongo.collection('login');
-        var res = {};
-        coll.insertOne({username: msg.username, password: msg.password, email:msg.email, phone:msg.phone}, function (err, user) {
-            if (user) {
-                res.code = 200;
-                res.user = user;
-
-            } else {
-                res.code = 400;
-                res.value = "Failed Login";
-            }
-            callback(null, res)
-        });
-    });
-}
 
 exports.handle_request = handle_request;
 exports.handleSignUp = handleSignUp;

@@ -48,27 +48,6 @@ module.exports = function(passport) {
         }
     }));
 
-    passport.use('signup', new LocalStrategy(function(username   , password, done) {
-        try {
-            mongo.connect(mongoURL, function(){
-                console.log('Connected to mongo at: ' + mongoURL);
-                var coll = mongo.collection('login');
-
-                coll.insertOne({username: username, password:password}, function(err, user){
-                    if (user) {
-                        done(null, {username: username, password: password});
-
-                    } else {
-                        done(null, false);
-                    }
-                });
-            });
-        }
-        catch (e){
-            done(e,{});
-        }
-    }));
-    
     // passport.use('signup', new LocalStrategy(function(username, password, done){
     //     try{
     //         mongo.connect(mongoURL, function(){
