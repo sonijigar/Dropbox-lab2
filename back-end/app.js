@@ -69,6 +69,9 @@ app.post('/signup', function(req, res) {
    kafka.make_request('signup_topic', {"operation":"signup","username":req.body.username, "password":req.body.password, "email":req.body.email, "phone":req.body.phone}, function(err, results){
         if (results.code == 200) {
             //done(null, results.user);
+            console.log(results)
+            req.session.user = results;
+            req.session.cookie.maxAge = 30 * 60 * 1000;
             console.log(results);
             var ob = results.user;
             ob.stat = "logged in";
@@ -94,7 +97,7 @@ app.post('/check', function(req, res){
     }
 })
 app.post('/login', function(req, res) {
-    console.log('sess:', req.session.user);
+    console.log('sess:', req.body);
     passport.authenticate('login', function(err, user) {
         if(err) {
             res.status(500).send();

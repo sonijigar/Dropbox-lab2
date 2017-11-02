@@ -5,7 +5,8 @@ import Login from "./Login";
 import Message from "./Message";
 import Welcome from "./Welcome";
 import Signup from "./Signup";
-import Land from "./Land"
+import Land from "./Land";
+import Signed from "./Signed"
 import RaisedButton from 'material-ui/RaisedButton';
     const style = {
         margin: 12,
@@ -35,9 +36,8 @@ class NewerHomePage extends Component {
                         phone: userdata.phone
                     });
 
-                    this.props.history.push("/welcome");
+                    this.props.history.push("/signedup");
                 } else {
-                    console.log("here");
                     this.setState({
                         isLoggedIn: false,
                         message: "Wrong username or password. Try again..!!"
@@ -49,7 +49,6 @@ class NewerHomePage extends Component {
     handleSubmit = (userdata) => {
         API.doLogin(userdata)
             .then((status) => {
-            console.log("stat", status);
                 if (status.stat === 'logged in') {
                     console.log("here");
                     window.sessionStorage.setItem("email", status.email);
@@ -115,6 +114,11 @@ class NewerHomePage extends Component {
                 <Route exact path="/welcome" render={() => (
                     <Welcome handleLogout={this.handleLogout} username={this.state.username}/>
                 )}/>
+
+                <Route exact path="/signedup" render={() => (
+                    <Signed />
+                )}/>
+
             </div>
         );
     }

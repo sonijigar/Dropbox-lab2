@@ -49,6 +49,7 @@ export const doLogin = (payload) =>
         credentials:'include',
         body: JSON.stringify(payload)
     }).then(res => {
+        console.log(JSON.stringify(payload))
         return res.json();
     })
         .catch(error => {
@@ -85,14 +86,102 @@ export const getFiles = () =>
         console.log(error);
         return error;
     })
-export const uploadFile = (payload) =>
+
+export const getFilesFromDir = (payload) =>
+    fetch(`${api}/files/listfromdir`,{
+        method: 'POST',
+        headers:{
+            ...headers,
+            'Content-Type':'application/json'
+        },
+        credentials:'include',
+        body:JSON.stringify(payload)
+
+    }).then(res => res.json())
+        .catch(error =>{
+            console.log(error);
+            return error;
+        })
+
+export const uploadFile = (payload, objPath) =>
     fetch(`${api}/files/upload`, {
         method: 'POST',
         credentials:'include',
-        body: payload
+        body: payload,
+        params:objPath.patharr
     }).then(res => {
         return res.status;
     }).catch(error => {
         console.log("This is error");
+        return error;
+    });
+
+export const createDir = (payload) =>
+    fetch(`${api}/files/createdir`, {
+        method:'POST',
+        headers:{
+            ...headers,
+            'Content-Type':'application/json'
+        },
+        credentials:'include',
+        body:JSON.stringify(payload)
+    }).then(res => res.status)
+
+export const downloadFile = (payload) =>
+    fetch(`${api}/files/download`,{
+        method:'POST',
+        headers:{
+            ...headers,
+            'Content-Type':'application/json'
+        },
+        credentials:'include',
+        body:JSON.stringify(payload)
+    }).then(res =>{
+        if(res.status == 200) {
+            console.log(payload)
+            console.log(res.status);
+            return res.json();
+        }
+        return res;
+    }).catch(error => {
+        console.log("This is Error");
+        return error;
+    });
+
+export const deleteFile = (payload) =>
+    fetch(`${api}/files/delete`,{
+        method:'POST',
+        headers:{
+            ...headers,
+            'Content-Type':'application/json'
+        },
+        credentials:'include',
+        body:JSON.stringify(payload)
+    }).then(res =>{
+        if(res.status == 200) {
+        return res
+        }
+        return res.status;
+    }).catch(error => {
+            console.log("This is Error");
+            return error;
+        });
+
+export const deleteDir = (payload) =>
+    fetch(`${api}/files/deletedir`,{
+        method:'POST',
+        headers:{
+            ...headers,
+            'Content-Type':'application/json'
+        },
+        credentials:'include',
+        body:JSON.stringify(payload)
+    }).then(res =>{
+        if(res.status == 200) {
+            return res
+        }
+        return res.status;
+    }).catch(error => {
+        console.log("This is Error");
         return error;
     });
