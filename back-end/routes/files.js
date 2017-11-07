@@ -125,6 +125,7 @@ router.post('/listfromdir', function(req, res, next){
 })
 
 router.post('/delete', function(req, res, next){
+    console.log(req.session)
     if(req.session.user._id){
         var userId = req.session.user._id;
         var path = './uploads/' + req.session.user._id;
@@ -166,10 +167,11 @@ router.post('/deletedir', function(req, res, next){
 
 router.post('/download', function(req, res, next){
     if(req.session.user._id){
+        console.log(req.session)
         var userId = req.session.user._id;
         var path = './uploads/' + req.session.user._id;
         var name = req.body.name;
-        console.log("reqvest",req.body);
+        //console.log("reqvest",req.body);
         kafka.make_request('file_topic', {"operation":"download", "dirname":userId, "path":path, "name":name},function(err, results){
             if(err){
                 res.status(401).send()
@@ -178,7 +180,7 @@ router.post('/download', function(req, res, next){
                 var obj = {}
                 obj.data = Buffer.from(results.data.data);
                 obj.name = results.name;
-                console.log("got results: ", obj);
+                //console.log("got results: ", obj);
                 res.status(200).json(obj)
             }
         })
@@ -188,4 +190,18 @@ router.post('/download', function(req, res, next){
     }
 })
 
+router.post('/share', function(req, res, next){
+    console.log("boddy::::::::::::::::::::::",req.body)
+    if(req.session.user._id){
+        kafka.make_request('file_topic', {"operation":"share", "emails":req.body.holders, "owner":req.session.user._id, "name":req.body.name}, function(err, results){
+            if(err){
+                res.status(401).send()
+            }
+            else{
+                res.status(201).send()
+            }
+        })
+
+    }
+})
 module.exports = router;

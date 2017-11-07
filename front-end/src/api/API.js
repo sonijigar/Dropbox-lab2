@@ -127,6 +127,41 @@ export const createDir = (payload) =>
         body:JSON.stringify(payload)
     }).then(res => res.status)
 
+
+export const shareFile = (payload) =>
+    fetch(`${api}/files/share`, {
+        method:'POST',
+        headers:{
+            ...headers,
+            'Content-Type':'application/json'
+        },
+        credentials:'include',
+        body:JSON.stringify(payload)
+    }).then(res => res.status)
+
+export const createSharedGroup = (payload) =>
+    fetch(`${api}/files/sharedDir`, {
+        method:'POST',
+        headers:{
+            ...headers,
+            'Content-Type':'application/json'
+        },
+        credentials:'include',
+        body:JSON.stringify(payload)
+    }).then(res => res.status)
+
+export const createGroup = (payload) =>
+    fetch(`${api}/files/createGroup`, {
+        method:'POST',
+        headers:{
+            ...headers,
+            'Content-Type':'application/json'
+        },
+        credentials:'include',
+        body:JSON.stringify(payload)
+    }).then(res => res.status)
+
+
 export const downloadFile = (payload) =>
     fetch(`${api}/files/download`,{
         method:'POST',
@@ -137,7 +172,7 @@ export const downloadFile = (payload) =>
         credentials:'include',
         body:JSON.stringify(payload)
     }).then(res =>{
-        if(res.status == 200) {
+        if(res.status === 200) {
             console.log(payload)
             console.log(res.status);
             return res.json();
@@ -158,7 +193,7 @@ export const deleteFile = (payload) =>
         credentials:'include',
         body:JSON.stringify(payload)
     }).then(res =>{
-        if(res.status == 200) {
+        if(res.status === 200) {
         return res
         }
         return res.status;
@@ -177,7 +212,7 @@ export const deleteDir = (payload) =>
         credentials:'include',
         body:JSON.stringify(payload)
     }).then(res =>{
-        if(res.status == 200) {
+        if(res.status === 200) {
             return res
         }
         return res.status;

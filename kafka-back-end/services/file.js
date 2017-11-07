@@ -83,7 +83,7 @@ function upload(msg, callback){
         mongo.connect(mongoURL, function() {
             var coll = mongo.collection('file')
             var res = {};
-            console.log("dataaaa", msg.filedetails.name);
+            console.log("data", msg.filedetails.name);
             mkdirp(msg.filedetails.path, function (err) {
             fs.writeFile(msg.filedetails.path +'/'+msg.filedetails.name , Buffer.from(msg.data.data), function (err) {
                 if (err)
@@ -190,6 +190,23 @@ function createDir(msg, callback){
     })
 }
 
+function shareFile(msg, callback){
+    try{
+        mongo.connect(mongoURL, function() {
+            var coll = mongo.collection('file')
+            //Do something with database
+            //Add file id to all the shared user's database
+            //Add shared flag equal to true to the file being shared
+            //
+            console.log("emails")
+        });
+    }
+    catch(e){
+        console.log(e);
+    }
+}
+
+exports.shareFile = shareFile;
 exports.deleteDir = deleteDir;
 exports.createDir = createDir;
 exports.downloadFile = downloadFile;

@@ -22,7 +22,7 @@ exports.connect = function(url, callback){
 exports.collection = function(name){
     if (!connected) {
       throw new Error('Must connect to Mongo before calling "collection"');
-    } 
+    }
     return db.collection(name);
-  
+
 };

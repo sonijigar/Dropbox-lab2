@@ -69,7 +69,7 @@ app.post('/signup', function(req, res) {
    kafka.make_request('signup_topic', {"operation":"signup","username":req.body.username, "password":req.body.password, "email":req.body.email, "phone":req.body.phone}, function(err, results){
         if (results.code == 200) {
             //done(null, results.user);
-            console.log(results)
+            console.log(results )
             req.session.user = results;
             req.session.cookie.maxAge = 30 * 60 * 1000;
             console.log(results);
