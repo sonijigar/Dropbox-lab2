@@ -82,7 +82,6 @@ class Login extends Component {
                                 label="Submit"
                                 type="button"
                                 onClick={() => this.props.handleSubmit(this.state)}/>
-
                         </div>
                     </form>
                 </div>

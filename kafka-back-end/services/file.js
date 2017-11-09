@@ -82,8 +82,9 @@ function upload(msg, callback){
     try{
         mongo.connect(mongoURL, function() {
             var coll = mongo.collection('file')
+            var collLogin = mongo.collection('login')
             var res = {};
-            console.log("data", msg.filedetails.name);
+            // console.log("data", msg.filedetails.name);
             mkdirp(msg.filedetails.path, function (err) {
             fs.writeFile(msg.filedetails.path +'/'+msg.filedetails.name , Buffer.from(msg.data.data), function (err) {
                 if (err)
@@ -92,13 +93,21 @@ function upload(msg, callback){
                     console.log("cool");
             })
         })
-            coll.insertOne({filedetail:msg.filedetails, user_id:msg.user_id}, function(err, result){
-                if(err)
-                    res.code = 400;
-                else {
-                    res.code = 200;
-                }
-                callback(null, res);
+            coll.insertOne({filedetail:msg.filedetails, user_id:msg.user_id, created_at:new Date(), deleted_at:'', members:[], starred:[], isFile:1}, function(err, result){
+                console.log("id::",msg.user_id)
+                //var strId = "ObjectId(\""+msg.user_id+"\")"
+                var srtId = "ObjectId(\"59e7e29cb9977c181c9aedf4\")"
+                console.log(srtId)
+                collLogin.update({_id:srtId}, {$push:{activity: {file_id:result["ops"][0]["_id"], filename: msg.filedetails.name, flag:1, time:result["ops"][0]["created_at"]}}}, {upsert:true}, function(err, results){
+                    console.log("there")
+                    //console.log("file id::", results["ops"][0]);
+                    if(err)
+                        res.code = 400;
+                    else {
+                        res.code = 200;
+                    }
+                    callback(null, res);
+                })
             })
        })
     }

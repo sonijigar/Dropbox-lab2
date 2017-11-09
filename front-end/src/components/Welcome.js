@@ -162,6 +162,12 @@ class Welcome extends Component {
         });
     };
 
+    handleNavClick = (name) => {
+        this.setState({
+            category:name
+        })
+    }
+
     handleShareholderNameChange = (idx) => (evt) => {
         const newShareholders = this.state.shareholders.map((shareholder, sidx) => {
             if (idx !== sidx) return shareholder;
@@ -247,6 +253,7 @@ class Welcome extends Component {
             shareholders: [{email: '' }],
             sharename:'',
             newdirname:'',
+            category:'home'
         };
     }
 
@@ -302,14 +309,349 @@ class Welcome extends Component {
                 onClick={this.createSharedDir}
             />,
         ];
+    if (this.state.category == "home") {
+            return (
+                <div>
+                    <div style={{float: 'left', width:'22%', height:'100%   '}}>
+                        <Navbar handleNavClick={this.handleNavClick} handleNavFile={this.handleNavFile}/>
+                    </div>
+                    <div style={{float:'left', width:'55%'}}>
+                        <div role="alert">
+                            <div>
+                                &nbsp;
+                                &nbsp;
+                                &nbsp;
+                            </div>
+                            <div>
+                                &nbsp;
+                                &nbsp;
+                                &nbsp;
+                            </div>
+                            <div >
+                                <strong><h1>Dropbox Home</h1></strong>
+                            </div>
 
-        if (window.sessionStorage.getItem("key")) {
+                            <div style={{float:'center'}}>
+                                <br/>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div style={{float:'top-right'}} >
+                        &nbsp;
+                        &nbsp;
+                        <strong>
+                            {window.sessionStorage.getItem("key")}
+                        </strong><RaisedButton
+                        label="Logout"
+                        style={style}
+                        type="button"
+                        onClick={() => this.props.handleLogout(this.state)}
+                    />
+                        <RaisedButton
+                            label="Create Shared Folder"
+                            style={style}
+                            primary={true}
+                            type="button"
+                            onClick={this.handleOpen2}
+                        /><br/>
+                        <RaisedButton
+                            label="Create Folder"
+                            style={style}
+                            primary={true}
+                            type="button"
+                            onClick={this.handleOpen}
+                        /><br/>
+                        <RaisedButton
+                            label="Create Grpoup"
+                            style={style}
+                            type="button"
+                            onClick={this.handleOpen1}
+                        /><br/>
+
+                        <Upload
+                            // className={'fileupload'}
+                            type="file"
+                            name="mypic"
+                            onChange={this.handleFileUpload}
+                        />
+
+                        <Dialog
+                            title="Name your shared folder"
+                            actions={actions2}
+                            modal={true}
+                            open={this.state.open2}
+                        >
+                            <input
+                                type="text"
+                                value = {this.state.newdirname}
+                                onChange={(event) => {
+                                    this.setState({
+                                        newdirname: event.target.value
+                                    });
+                                }}
+                            /><br/>
+                            <Divider/>
+                            <strong>Share with:</strong>
+                            {this.state.shareholders.map((shareholder, idx) => (
+                                <div className="shareholder">
+                                    <TextField
+                                        type="text"
+                                        placeholder={`person #${idx + 1}`}
+                                        value={shareholder.email}
+                                        onChange={this.handleShareholderNameChange(idx)}
+                                    />
+                                    &nbsp;
+                                    &nbsp;
+                                    <RaisedButton type="button" onClick={this.handleRemoveShareholder(idx)} className="small">-</RaisedButton>
+                                </div>
+                            ))}
+
+
+                            <RaisedButton primary={true} type="button" onClick={this.handleAddShareholder} label="Add more" className="small"/>
+                        </Dialog>
+
+                        <Dialog
+                            title="Enter email"
+                            actions={actions1}
+                            modal={true}
+                            open={this.state.open1}
+                        >
+
+                            {this.state.shareholders.map((shareholder, idx) => (
+                                <div className="shareholder">
+                                    <TextField
+                                        type="text"
+                                        placeholder={`person #${idx + 1}`}
+                                        value={shareholder.email}
+                                        onChange={this.handleShareholderNameChange(idx)}
+                                    />
+                                    &nbsp;
+                                    &nbsp;
+                                    <RaisedButton type="button" onClick={this.handleRemoveShareholder(idx)} className="small">-</RaisedButton>
+                                </div>
+                            ))}
+
+
+                            <RaisedButton primary={true} type="button" onClick={this.handleAddShareholder} label="Add more" className="small"/>
+                        </Dialog>
+
+                        <Dialog
+                            title="Name Your Directory"
+                            actions={actions}
+                            modal={true}
+                            open={this.state.open}
+                        >
+                            <TextField
+                                name = "dirname"
+                                label = "enter name"
+                                value = {this.state.dirname}
+                                onChange={(event) => {
+                                    this.setState({
+                                        dirname: event.target.value
+                                    });
+                                }}
+                            />
+                        </Dialog>
+
+
+
+
+                    </div>
+
+                </div>
+            )
+        }
+
+        else if (this.state.category == "file") {
+            return (
+                <div>
+                    <div style={{float: 'left', width:'22%', height:'100%   '}}>
+                        <Navbar handleNavClick={this.handleNavClick} handleNavFile={this.handleNavFile}/>
+                    </div>
+                    <div style={{float:'left', width:'55%'}}>
+                        <div role="alert">
+                            <div>
+                                &nbsp;
+                                &nbsp;
+                                &nbsp;
+                            </div>
+                            <div>
+                                &nbsp;
+                                &nbsp;
+                                &nbsp;
+                            </div>
+                            <div >
+                                <strong><h1>Dropbox File</h1></strong>
+                            </div>
+
+                            <div style={{float:'center'}}>
+                                <div style={{float:'left'}}>
+                                    <RaisedButton
+                                        style={style}
+                                        label="<"
+                                        disabled={this.state.disable}
+                                        type="button"
+                                        onClick={()=> {
+                                            var dir = {dirname: this.state.dirarr.pop()}
+                                            if (this.state.dirarr == 0) {
+                                                API.getFiles()
+                                                    .then((data) => {
+                                                        console.log(data);
+                                                        this.setState({
+                                                            files: data.filelist,
+                                                            dirs: data.dirlist,
+                                                            disable:true,
+                                                        });
+                                                    });
+                                            }
+                                            else{
+                                                API.getFilesFromDir(dir)
+                                                    .then((data) => {
+                                                        this.setState({
+                                                            files: data.filelist,
+                                                            dirs: data.dirlist
+
+                                                        })
+                                                    });
+                                            }
+                                        }}
+                                    />
+                                </div><br/>
+                                <FileGridList files={this.state.files} dirs={this.state.dirs} handleDirClick={this.handleDirClick}/>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div style={{float:'top-right'}} >
+                        &nbsp;
+                        &nbsp;
+                        <strong>
+                            {window.sessionStorage.getItem("key")}
+                        </strong><RaisedButton
+                        label="Logout"
+                        style={style}
+                        type="button"
+                        onClick={() => this.props.handleLogout(this.state)}
+                    />
+                        <RaisedButton
+                            label="Create Shared Folder"
+                            style={style}
+                            primary={true}
+                            type="button"
+                            onClick={this.handleOpen2}
+                        /><br/>
+                        <RaisedButton
+                            label="Create Folder"
+                            style={style}
+                            primary={true}
+                            type="button"
+                            onClick={this.handleOpen}
+                        /><br/>
+                        <RaisedButton
+                            label="Create Grpoup"
+                            style={style}
+                            type="button"
+                            onClick={this.handleOpen1}
+                        /><br/>
+
+                        <Dialog
+                            title="Name your shared folder"
+                            actions={actions2}
+                            modal={true}
+                            open={this.state.open2}
+                        >
+                            <input
+                                type="text"
+                                value = {this.state.newdirname}
+                                onChange={(event) => {
+                                    this.setState({
+                                        newdirname: event.target.value
+                                    });
+                                }}
+                            /><br/>
+                            <Divider/>
+                            <strong>Share with:</strong>
+                            {this.state.shareholders.map((shareholder, idx) => (
+                                <div className="shareholder">
+                                    <TextField
+                                        type="text"
+                                        placeholder={`person #${idx + 1}`}
+                                        value={shareholder.email}
+                                        onChange={this.handleShareholderNameChange(idx)}
+                                    />
+                                    &nbsp;
+                                    &nbsp;
+                                    <RaisedButton type="button" onClick={this.handleRemoveShareholder(idx)} className="small">-</RaisedButton>
+                                </div>
+                            ))}
+
+
+                            <RaisedButton primary={true} type="button" onClick={this.handleAddShareholder} label="Add more" className="small"/>
+                        </Dialog>
+
+                        <Dialog
+                            title="Enter email"
+                            actions={actions1}
+                            modal={true}
+                            open={this.state.open1}
+                        >
+                            {this.state.shareholders.map((shareholder, idx) => (
+                                <div className="shareholder">
+                                    <TextField
+                                        type="text"
+                                        placeholder={`person #${idx + 1}`}
+                                        value={shareholder.email}
+                                        onChange={this.handleShareholderNameChange(idx)}
+                                    />
+                                    &nbsp;
+                                    &nbsp;
+                                    <RaisedButton type="button" onClick={this.handleRemoveShareholder(idx)} className="small">-</RaisedButton>
+                                </div>
+                            ))}
+
+
+                            <RaisedButton primary={true} type="button" onClick={this.handleAddShareholder} label="Add more" className="small"/>
+                        </Dialog>
+
+                        <Dialog
+                            title="Name Your Directory"
+                            actions={actions}
+                            modal={true}
+                            open={this.state.open}
+                        >
+                            <TextField
+                                name = "dirname"
+                                label = "enter name"
+                                value = {this.state.dirname}
+                                onChange={(event) => {
+                                    this.setState({
+                                        dirname: event.target.value
+                                    });
+                                }}
+                            />
+                        </Dialog>
+
+                        <Upload
+                            // className={'fileupload'}
+                            type="file"
+                            name="mypic"
+                            onChange={this.handleFileUpload}
+                        />
+
+
+                    </div>
+
+                </div>
+            )
+        }
+    else if (this.state.category == "group") {
         return (
             <div>
                 <div style={{float: 'left', width:'22%', height:'100%   '}}>
-                <Navbar handleNavFile={this.handleNavFile}/>
+                    <Navbar handleNavClick={this.handleNavClick} handleNavFile={this.handleNavFile}/>
                 </div>
-            <div style={{float:'left', width:'55%'}}>
+                <div style={{float:'left', width:'55%'}}>
                     <div role="alert">
                         <div>
                             &nbsp;
@@ -322,49 +664,47 @@ class Welcome extends Component {
                             &nbsp;
                         </div>
                         <div >
-                            <strong><h1>Dropbox</h1></strong>
-                        {/*<strong>email</strong>: {window.sessionStorage.getItem("email")} <br />*/}
-                        {/*<strong>phone</strong>: {window.sessionStorage.getItem("phone")} <br />*/}
+                            <strong><h1>Dropbox grp</h1></strong>
                         </div>
 
                         <div style={{float:'center'}}>
                             <div style={{float:'left'}}>
-                            <RaisedButton
-                            style={style}
-                            label="<"
-                            disabled={this.state.disable}
-                            type="button"
-                            onClick={()=> {
-                                var dir = {dirname: this.state.dirarr.pop()}
-                                if (this.state.dirarr == 0) {
-                                    API.getFiles()
-                                        .then((data) => {
-                                            console.log(data);
-                                            this.setState({
-                                                files: data.filelist,
-                                                dirs: data.dirlist,
-                                                disable:true,
-                                            });
-                                        });
-                                }
-                                else{
-                                    API.getFilesFromDir(dir)
-                                        .then((data) => {
-                                            this.setState({
-                                                files: data.filelist,
-                                                dirs: data.dirlist
+                                <RaisedButton
+                                    style={style}
+                                    label="<"
+                                    disabled={this.state.disable}
+                                    type="button"
+                                    onClick={()=> {
+                                        var dir = {dirname: this.state.dirarr.pop()}
+                                        if (this.state.dirarr == 0) {
+                                            API.getFiles()
+                                                .then((data) => {
+                                                    console.log(data);
+                                                    this.setState({
+                                                        files: data.filelist,
+                                                        dirs: data.dirlist,
+                                                        disable:true,
+                                                    });
+                                                });
+                                        }
+                                        else{
+                                            API.getFilesFromDir(dir)
+                                                .then((data) => {
+                                                    this.setState({
+                                                        files: data.filelist,
+                                                        dirs: data.dirlist
 
-                                            })
-                                        });
-                            }
-                            }}
-                            />
+                                                    })
+                                                });
+                                        }
+                                    }}
+                                />
                             </div><br/>
                             <FileGridList files={this.state.files} dirs={this.state.dirs} handleDirClick={this.handleDirClick}/>
                         </div>
                     </div>
 
-            </div>
+                </div>
                 <div style={{float:'top-right'}} >
                     &nbsp;
                     &nbsp;
@@ -403,23 +743,6 @@ class Welcome extends Component {
                         modal={true}
                         open={this.state.open2}
                     >
-                        {/*{this.state.email.map((email, idx)=>(*/}
-                        {/*<div>*/}
-                        {/*<TextField*/}
-                        {/*name = "email"*/}
-                        {/*label = "enter email"*/}
-                        {/*value = {email}*/}
-                        {/*onChange={(event) => {*/}
-                        {/*this.setState({*/}
-                        {/*email: event.target.value*/}
-                        {/*});*/}
-                        {/*}}*/}
-                        {/*/>*/}
-                        {/*&nbsp;*/}
-                        {/*&nbsp;*/}
-                        {/*<RaisedButton primary={false} onClick>+</RaisedButton>*/}
-                        {/*</div>*/}
-                        {/*))}*/}
                         <input
                             type="text"
                             value = {this.state.newdirname}
@@ -455,24 +778,6 @@ class Welcome extends Component {
                         modal={true}
                         open={this.state.open1}
                     >
-                        {/*{this.state.email.map((email, idx)=>(*/}
-                        {/*<div>*/}
-                        {/*<TextField*/}
-                        {/*name = "email"*/}
-                        {/*label = "enter email"*/}
-                        {/*value = {email}*/}
-                        {/*onChange={(event) => {*/}
-                        {/*this.setState({*/}
-                        {/*email: event.target.value*/}
-                        {/*});*/}
-                        {/*}}*/}
-                        {/*/>*/}
-                        {/*&nbsp;*/}
-                        {/*&nbsp;*/}
-                        {/*<RaisedButton primary={false} onClick>+</RaisedButton>*/}
-                        {/*</div>*/}
-                        {/*))}*/}
-
                         {this.state.shareholders.map((shareholder, idx) => (
                             <div className="shareholder">
                                 <TextField
@@ -498,14 +803,14 @@ class Welcome extends Component {
                         open={this.state.open}
                     >
                         <TextField
-                        name = "dirname"
-                        label = "enter name"
-                        value = {this.state.dirname}
-                        onChange={(event) => {
-                            this.setState({
-                                dirname: event.target.value
-                            });
-                        }}
+                            name = "dirname"
+                            label = "enter name"
+                            value = {this.state.dirname}
+                            onChange={(event) => {
+                                this.setState({
+                                    dirname: event.target.value
+                                });
+                            }}
                         />
                     </Dialog>
 
@@ -522,6 +827,191 @@ class Welcome extends Component {
             </div>
         )
     }
+
+    else if (this.state.category == "share") {
+        return (
+            <div>
+                <div style={{float: 'left', width:'22%', height:'100%   '}}>
+                    <Navbar handleNavClick={this.handleNavClick} handleNavFile={this.handleNavFile}/>
+                </div>
+                <div style={{float:'left', width:'55%'}}>
+                    <div role="alert">
+                        <div>
+                            &nbsp;
+                            &nbsp;
+                            &nbsp;
+                        </div>
+                        <div>
+                            &nbsp;
+                            &nbsp;
+                            &nbsp;
+                        </div>
+                        <div style={{float:'left-top', margin:12}}>
+
+                            <strong><h3>Shared with me</h3></strong>
+                        </div>
+
+                        <div style={{float:'center'}}>
+                            <div style={{float:'left'}}>
+                                <RaisedButton
+                                    style={style}
+                                    label="<"
+                                    disabled={this.state.disable}
+                                    type="button"
+                                    onClick={()=> {
+                                        var dir = {dirname: this.state.dirarr.pop()}
+                                        if (this.state.dirarr == 0) {
+                                            API.getFiles()
+                                                .then((data) => {
+                                                    console.log(data);
+                                                    this.setState({
+                                                        files: data.filelist,
+                                                        dirs: data.dirlist,
+                                                        disable:true,
+                                                    });
+                                                });
+                                        }
+                                        else{
+                                            API.getFilesFromDir(dir)
+                                                .then((data) => {
+                                                    this.setState({
+                                                        files: data.filelist,
+                                                        dirs: data.dirlist
+
+                                                    })
+                                                });
+                                        }
+                                    }}
+                                />
+                            </div><br/>
+                            <FileGridList files={this.state.files} dirs={this.state.dirs} handleDirClick={this.handleDirClick}/>
+                        </div>
+                    </div>
+
+                </div>
+                <div style={{float:'top-right'}} >
+                    &nbsp;
+                    &nbsp;
+                    <strong>
+                        {window.sessionStorage.getItem("key")}
+                    </strong><RaisedButton
+                    label="Logout"
+                    style={style}
+                    type="button"
+                    onClick={() => this.props.handleLogout(this.state)}
+                />
+                    <RaisedButton
+                        label="Create Shared Folder"
+                        style={style}
+                        primary={true}
+                        type="button"
+                        onClick={this.handleOpen2}
+                    /><br/>
+                    <RaisedButton
+                        label="Create Folder"
+                        style={style}
+                        primary={true}
+                        type="button"
+                        onClick={this.handleOpen}
+                    /><br/>
+                    <RaisedButton
+                        label="Create Grpoup"
+                        style={style}
+                        type="button"
+                        onClick={this.handleOpen1}
+                    /><br/>
+
+                    <Dialog
+                        title="Name your shared folder"
+                        actions={actions2}
+                        modal={true}
+                        open={this.state.open2}
+                    >
+                        <input
+                            type="text"
+                            value = {this.state.newdirname}
+                            onChange={(event) => {
+                                this.setState({
+                                    newdirname: event.target.value
+                                });
+                            }}
+                        /><br/>
+                        <Divider/>
+                        <strong>Share with:</strong>
+                        {this.state.shareholders.map((shareholder, idx) => (
+                            <div className="shareholder">
+                                <TextField
+                                    type="text"
+                                    placeholder={`person #${idx + 1}`}
+                                    value={shareholder.email}
+                                    onChange={this.handleShareholderNameChange(idx)}
+                                />
+                                &nbsp;
+                                &nbsp;
+                                <RaisedButton type="button" onClick={this.handleRemoveShareholder(idx)} className="small">-</RaisedButton>
+                            </div>
+                        ))}
+
+
+                        <RaisedButton primary={true} type="button" onClick={this.handleAddShareholder} label="Add more" className="small"/>
+                    </Dialog>
+
+                    <Dialog
+                        title="Enter email"
+                        actions={actions1}
+                        modal={true}
+                        open={this.state.open1}
+                    >
+                        {this.state.shareholders.map((shareholder, idx) => (
+                            <div className="shareholder">
+                                <TextField
+                                    type="text"
+                                    placeholder={`person #${idx + 1}`}
+                                    value={shareholder.email}
+                                    onChange={this.handleShareholderNameChange(idx)}
+                                />
+                                &nbsp;
+                                &nbsp;
+                                <RaisedButton type="button" onClick={this.handleRemoveShareholder(idx)} className="small">-</RaisedButton>
+                            </div>
+                        ))}
+
+
+                        <RaisedButton primary={true} type="button" onClick={this.handleAddShareholder} label="Add more" className="small"/>
+                    </Dialog>
+
+                    <Dialog
+                        title="Name Your Directory"
+                        actions={actions}
+                        modal={true}
+                        open={this.state.open}
+                    >
+                        <TextField
+                            name = "dirname"
+                            label = "enter name"
+                            value = {this.state.dirname}
+                            onChange={(event) => {
+                                this.setState({
+                                    dirname: event.target.value
+                                });
+                            }}
+                        />
+                    </Dialog>
+
+                    <Upload
+                        // className={'fileupload'}
+                        type="file"
+                        name="mypic"
+                        onChange={this.handleFileUpload}
+                    />
+
+
+                </div>
+
+            </div>
+        )
+    }
+
     else{
             return(
             //<Redirect to ="/"/>

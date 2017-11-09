@@ -25,19 +25,6 @@ function handle_request(msg, callback){
             catch (e){
                 console.log("Request Handled in catch")
             }
-    // var res = {};
-    // console.log("In handle request:"+ JSON.stringify(msg));
-    //
-    // if(msg.username == "bhavan@b.com" && msg.password =="a"){
-    //     res.code = "200";
-    //     res.value = "Success Login";
-    //
-    // }
-    // else{
-    //     res.code = "401";
-    //     res.value = "Failed Login";
-    // }
-    // callback(null, res);
 }
 
 function handleSignUp(msg, callback){
@@ -47,16 +34,12 @@ function handleSignUp(msg, callback){
             var coll = mongo.collection('login');
             var res = {};
 
-            coll.insertOne({username: msg.username, password: msg.password, email:msg.email, phone:msg.phone}, function (err, users) {
+            coll.insertOne({username: msg.username, password: msg.password, email:msg.email, phone:msg.phone, activity:[],shared_paths:[]}, function (err, users) {
                 coll.findOne({username: msg.username, password: msg.password}, function (err, user) {
                     if (user) {
-
-                        console.log("here");
                         res.code = "200";
                         res.user = user;
-
                     } else {
-                        console.log("there");
                         res.code = "401";
                         res.value = "Failed Sign Up";
                     }
@@ -68,19 +51,6 @@ function handleSignUp(msg, callback){
     catch (e){
         console.log("Request Handled in catch")
     }
-    // var res = {};
-    // console.log("In handle request:"+ JSON.stringify(msg));
-    //
-    // if(msg.username == "bhavan@b.com" && msg.password =="a"){
-    //     res.code = "200";
-    //     res.value = "Success Login";
-    //
-    // }
-    // else{
-    //     res.code = "401";
-    //     res.value = "Failed Login";
-    // }
-    // callback(null, res);
 }
 
 exports.handle_request = handle_request;

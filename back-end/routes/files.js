@@ -92,6 +92,7 @@ router.post('/createdir', function(req, res, next){
 router.post('/list', function(req, res, next){
     if(req.session.user._id){
         var userId = req.session.user._id;
+        console.log("sess id",req.session.user._id)
         kafka.make_request('file_topic', {"operation":"list","dirname":userId}, function(err, results){
             if(err){
                 res.status(401).send(results)
