@@ -107,6 +107,84 @@ router.post('/list', function(req, res, next){
     }
 })
 
+router.post('/sharedfilelist', function(req, res, next){
+    if(req.session.user._id){
+        var userId = req.session.user._id;
+        console.log("sess id",req.session.user._id)
+        kafka.make_request('file_topic', {"operation":"sharedfilelist","userId":userId}, function(err, results){
+            if(err){
+                res.status(401).send(results)
+            }
+            else{
+                console.log("shared result:", results)
+                res.status(200).send(results)
+            }
+        })
+    }
+    else{
+        res.status(401).json({message:"session expired"})
+    }
+})
+
+router.post('/starredfilelist', function(req, res, next){
+    if(req.session.user._id){
+        var userId = req.session.user._id;
+        console.log("sess id",req.session.user._id)
+        kafka.make_request('file_topic', {"operation":"starredfilelist","userId":userId}, function(err, results){
+            if(err){
+                res.status(401).send(results)
+            }
+            else{
+                console.log("shared result:", results)
+                res.status(200).send(results)
+            }
+        })
+    }
+    else{
+        res.status(401).json({message:"session expired"})
+    }
+})
+
+router.post('/getactivity', function(req, res, next){
+    if(req.session.user._id){
+
+        console.log("hey baby")
+        var userId = req.session.user._id;
+        console.log("sess id",req.session.user._id)
+        kafka.make_request('file_topic', {"operation":"activity","userId":userId}, function(err, results){
+            if(err){
+                res.status(401).send(results)
+            }
+            else{
+                console.log("shared result:", results)
+                res.status(200).send(results)
+            }
+        })
+    }
+    else{
+        res.status(401).json({message:"session expired"})
+    }
+})
+
+router.post('/grouplist', function(req, res, next){
+    if(req.session.user._id){
+        var userId = req.session.user._id;
+        console.log("sess id group[[",req.session.user._id)
+        kafka.make_request('file_topic', {"operation":"grouplist","userId":userId}, function(err, results){
+            if(err){
+                res.status(401).send(results)
+            }
+            else{
+                console.log("hahahahaha")
+                res.status(200).send(results)
+            }
+        })
+    }
+    else{
+        res.status(401).json({message:"session expired"})
+    }
+})
+
 router.post('/listfromdir', function(req, res, next){
     if(req.session.user._id){
         var userId = req.session.user._id;
@@ -122,6 +200,39 @@ router.post('/listfromdir', function(req, res, next){
     }
     else{
         res.status(401).json({message:"session expired"})
+    }
+})
+
+router.post('/starfile', function(req,res,next){
+    if(req.session.user._id){
+        kafka.make_request('file_topic', {"operation":"starfile", "userId":req.session.user._id, "filename":req.body.name, "val":req.body.val}, function(err, results){
+            if(err){
+                res.status(401).send()
+            }
+            else{
+                res.status(200).send(results)
+            }
+        })
+    }
+    else{
+        res.status(400).json({message:"session expired"})
+    }
+})
+
+router.post('/groupmembers', function(req,res,next){
+    if(req.session.user._id){
+        console.log("naammeee",req.body.name)
+        kafka.make_request('file_topic', {"operation":"groupmembers", "userId":req.session.user._id, "name":req.body.name}, function(err, results){
+            if(err){
+                res.status(401).send()
+            }
+            else{
+                res.status(200).send(results)
+            }
+        })
+    }
+    else{
+        res.status(400).json({message:"session expired"})
     }
 })
 
@@ -168,7 +279,7 @@ router.post('/deletedir', function(req, res, next){
 
 router.post('/download', function(req, res, next){
     if(req.session.user._id){
-        console.log(req.session)
+        //console.log(req.session)
         var userId = req.session.user._id;
         var path = './uploads/' + req.session.user._id;
         var name = req.body.name;
@@ -199,7 +310,22 @@ router.post('/share', function(req, res, next){
                 res.status(401).send()
             }
             else{
-                res.status(201).send()
+                res.status(201).send(results)
+            }
+        })
+
+    }
+})
+
+router.post('/createGroup', function(req, res, next){
+    if(req.session.user._id){
+        console.log("boddy:",req.body)
+        kafka.make_request('file_topic', {"operation":"group", "emails":req.body.holders, "owner":req.session.user._id, "name":req.body.groupname}, function(err, results){
+            if(err){
+                res.status(401).send()
+            }
+            else{
+                res.status(201).send(results)
             }
         })
 

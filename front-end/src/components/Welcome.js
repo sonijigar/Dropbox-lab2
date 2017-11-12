@@ -10,9 +10,13 @@ import Navbar from './Navbar'
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import FileGridList from './FileGridList';
+import SharedFileList from './SharedFileList';
+import Starred from './Starred';
+import GroupList from './GroupList';
 import Upload from 'material-ui-upload/Upload';
 const style = {
     margin: 12,
+    float:'right'
 };
 
 class Welcome extends Component {
@@ -121,15 +125,29 @@ class Welcome extends Component {
         var arr = this.state.dirarr;
         arr.push(dirname.dirname);
         API.getFilesFromDir(dirname)
-            .then((data) => {;
+            .then((data) => {
             this.setState({
                 files:data.filelist,
                 dirs:data.dirlist,
                 dirarr: arr,
                 disable:false
             })
-                console.log("dirarray:", this.state.dirarr);
-            console.log("array:",arr);
+            });
+    }
+
+    handlesharedDirClick = (dirname) => {
+        var arr = this.state.shareddirarr;
+        arr.push(dirname.shareddirname);
+        API.getFilesFromDir(dirname)
+            .then((data) => {;
+                this.setState({
+                    sharedfiles:data.filelist,
+                    shareddirs:data.dirlist,
+                    shareddirarr: arr,
+                    shareddisable:false
+                })
+                console.log("dirarray:", this.state.shareddirarr);
+                console.log("array:",arr);
             });
     }
 
@@ -192,20 +210,19 @@ class Welcome extends Component {
 
     handleGroupCreation = () => {
         this.setState({
-            open:false,
+            open1:false,
 
         })
         console.log(this.state.shareholders)
-        var isname = this.state.sharename;
-        console.log("isname",isname)
         var body = {
-            name: this.state.sharename,
-            holders:this.state.shareholders
+            holders:this.state.shareholders,
+            groupname:this.state.newgroupname
         }
-        console.log(body)
+        console.log("bodie:",body)
         API.createGroup(body)
             .then((res)=>{
                 if(res == 201){
+                    console.log("object:", body)
                     console.log("email added")
                 }
                 else{
@@ -243,17 +260,27 @@ class Welcome extends Component {
         this.state = {
             files: [],
             dirs: [],
+            groups:[],
             username : '',
             open:false,
             dirname : '',
             dirarr:[],
             disable:true,
+            shareddirarr:[],
+            shareddirs:'',
+            sharedfiles:[],
+            shareddirs:[],
+            starredfiles:[],
+            starreddirs:[],
+            shareddisable:false,
             open1:false,
             open2:false,
             shareholders: [{email: '' }],
             sharename:'',
             newdirname:'',
-            category:'home'
+            newgroupname:'',
+            category:'home',
+            activity:[],
         };
     }
 
@@ -268,6 +295,39 @@ class Welcome extends Component {
                     disable:true
                 });
             });
+
+        API.getSharedFiles()
+            .then((data) => {
+                console.log("data:",data);
+                this.setState({
+                    sharedfiles: data.filelist,
+                    shareddirs: data.dirlist,
+                    shareddisable:true
+                });
+                console.log("states1:", this.state.sharedfiles);
+                console.log("states2:", this.state.shareddirs);
+
+            });
+
+        API.getGroups()
+            .then((data) => {
+            console.log("grouplist",data.grouplist);
+            this.setState({groups:data.grouplist});
+        });
+
+        API.getStarred()
+            .then(data => {
+            this.setState({
+            starreddirs:data.dirs,
+            starredfiles:data.files,
+            })
+    })
+        API.getActivity()
+            .then((data)=>{
+                this.setState({
+                    activity:data.activity,
+                })
+            })
     }
 
     render() {
@@ -312,7 +372,7 @@ class Welcome extends Component {
     if (this.state.category == "home") {
             return (
                 <div>
-                    <div style={{float: 'left', width:'22%', height:'100%   '}}>
+                    <div style={{float: 'left', width:'22%', height:'100%'}}>
                         <Navbar handleNavClick={this.handleNavClick} handleNavFile={this.handleNavFile}/>
                     </div>
                     <div style={{float:'left', width:'55%'}}>
@@ -331,46 +391,48 @@ class Welcome extends Component {
                                 <strong><h1>Dropbox Home</h1></strong>
                             </div>
 
-                            <div style={{float:'center'}}>
-                                <br/>
-                            </div>
+                        <div style={{float:'center'}}>
+                            <Starred files={this.state.starredfiles} dirs={this.state.starreddirs} activity={this.state.activity} />
+                        </div>
                         </div>
 
                     </div>
-                    <div style={{float:'top-right'}} >
+                    <div style={{float:'left',width:'20%', height:'100%'}} >
+
                         &nbsp;
                         &nbsp;
                         <strong>
                             {window.sessionStorage.getItem("key")}
                         </strong><RaisedButton
                         label="Logout"
-                        style={style}
+                        style={{margin:'12', width:'100%'}}
                         type="button"
                         onClick={() => this.props.handleLogout(this.state)}
-                    />
+                        />
                         <RaisedButton
                             label="Create Shared Folder"
-                            style={style}
+                            style={{margin:'12', width:'100%'}}
                             primary={true}
                             type="button"
                             onClick={this.handleOpen2}
                         /><br/>
                         <RaisedButton
                             label="Create Folder"
-                            style={style}
+                            style={{margin:'12', width:'100%'}}
                             primary={true}
                             type="button"
                             onClick={this.handleOpen}
                         /><br/>
                         <RaisedButton
                             label="Create Grpoup"
-                            style={style}
+                            style={{margin:'12', width:'100%'}}
                             type="button"
                             onClick={this.handleOpen1}
                         /><br/>
 
                         <Upload
                             // className={'fileupload'}
+                            style={{margin:'12', width:'100%'}}
                             type="file"
                             name="mypic"
                             onChange={this.handleFileUpload}
@@ -412,12 +474,21 @@ class Welcome extends Component {
                         </Dialog>
 
                         <Dialog
-                            title="Enter email"
+                            title="Enter Group Name"
                             actions={actions1}
                             modal={true}
                             open={this.state.open1}
                         >
-
+                            <input
+                                type="text"
+                                value = {this.state.newgroupname}
+                                onChange={(event) => {
+                                    this.setState({
+                                        newgroupname: event.target.value
+                                    });
+                                }}
+                            /><br/>
+                            <Divider/>
                             {this.state.shareholders.map((shareholder, idx) => (
                                 <div className="shareholder">
                                     <TextField
@@ -453,10 +524,6 @@ class Welcome extends Component {
                                 }}
                             />
                         </Dialog>
-
-
-
-
                     </div>
 
                 </div>
@@ -466,10 +533,10 @@ class Welcome extends Component {
         else if (this.state.category == "file") {
             return (
                 <div>
-                    <div style={{float: 'left', width:'22%', height:'100%   '}}>
+                    <div style={{float: 'left', width:'22%', height:'100% '}}>
                         <Navbar handleNavClick={this.handleNavClick} handleNavFile={this.handleNavFile}/>
                     </div>
-                    <div style={{float:'left', width:'55%'}}>
+                    <div style={{float:'left', width:'55%', height:'100%'}}>
                         <div role="alert">
                             <div>
                                 &nbsp;
@@ -516,41 +583,43 @@ class Welcome extends Component {
                                                     });
                                             }
                                         }}
-                                    />
-                                </div><br/>
-                                <FileGridList files={this.state.files} dirs={this.state.dirs} handleDirClick={this.handleDirClick}/>
+                                    /></div><br/>{console.log("filessss",this.state.dirs)}
+                                <FileGridList files={this.state.files} dirs={this.state.dirs} handleDirClick={this.handleDirClick} getFiles={this.getFiles}/>
+
                             </div>
                         </div>
 
                     </div>
-                    <div style={{float:'top-right'}} >
+                    <div style={{float:'left',width:'20%', height:'100%'}} >
                         &nbsp;
                         &nbsp;
                         <strong>
                             {window.sessionStorage.getItem("key")}
-                        </strong><RaisedButton
+                        </strong>
+                        <div style={{ float:'center'}}>
+                            <RaisedButton
                         label="Logout"
-                        style={style}
+                        style={{margin:'12', width:'100%'}}
                         type="button"
                         onClick={() => this.props.handleLogout(this.state)}
-                    />
+                        />
                         <RaisedButton
                             label="Create Shared Folder"
-                            style={style}
+                            style={{margin:'12', width:'100%'}}
                             primary={true}
                             type="button"
                             onClick={this.handleOpen2}
                         /><br/>
                         <RaisedButton
                             label="Create Folder"
-                            style={style}
+                            style={{margin:'12', width:'100%'}}
                             primary={true}
                             type="button"
                             onClick={this.handleOpen}
                         /><br/>
                         <RaisedButton
                             label="Create Grpoup"
-                            style={style}
+                            style={{margin:'12', width:'100%'}}
                             type="button"
                             onClick={this.handleOpen1}
                         /><br/>
@@ -591,11 +660,21 @@ class Welcome extends Component {
                         </Dialog>
 
                         <Dialog
-                            title="Enter email"
+                            title="Enter Group Name"
                             actions={actions1}
                             modal={true}
                             open={this.state.open1}
                         >
+                            <input
+                                type="text"
+                                value = {this.state.newgroupname}
+                                onChange={(event) => {
+                                    this.setState({
+                                        newgroupname: event.target.value
+                                    });
+                                }}
+                            /><br/>
+                            <Divider/>
                             {this.state.shareholders.map((shareholder, idx) => (
                                 <div className="shareholder">
                                     <TextField
@@ -634,12 +713,12 @@ class Welcome extends Component {
 
                         <Upload
                             // className={'fileupload'}
+                            style={{margin:'12', width:'100%'}}
                             type="file"
                             name="mypic"
                             onChange={this.handleFileUpload}
                         />
-
-
+                        </div>
                     </div>
 
                 </div>
@@ -664,7 +743,7 @@ class Welcome extends Component {
                             &nbsp;
                         </div>
                         <div >
-                            <strong><h1>Dropbox grp</h1></strong>
+                            <strong><h1>My groups</h1></strong>
                         </div>
 
                         <div style={{float:'center'}}>
@@ -700,39 +779,40 @@ class Welcome extends Component {
                                     }}
                                 />
                             </div><br/>
-                            <FileGridList files={this.state.files} dirs={this.state.dirs} handleDirClick={this.handleDirClick}/>
+                            <GroupList groups={this.state.groups}/>
+                            {/*<FileGridList files={this.state.files} dirs={this.state.dirs} handleDirClick={this.handleDirClick}/>*/}
                         </div>
                     </div>
 
                 </div>
-                <div style={{float:'top-right'}} >
+                <div style={{float:'left',width:'20%', height:'100%'}} >
                     &nbsp;
                     &nbsp;
                     <strong>
                         {window.sessionStorage.getItem("key")}
                     </strong><RaisedButton
                     label="Logout"
-                    style={style}
+                    style={{margin:'12', width:'100%'}}
                     type="button"
                     onClick={() => this.props.handleLogout(this.state)}
                 />
                     <RaisedButton
                         label="Create Shared Folder"
-                        style={style}
+                        style={{margin:'12', width:'100%'}}
                         primary={true}
                         type="button"
                         onClick={this.handleOpen2}
                     /><br/>
                     <RaisedButton
                         label="Create Folder"
-                        style={style}
+                        style={{margin:'12', width:'100%'}}
                         primary={true}
                         type="button"
                         onClick={this.handleOpen}
                     /><br/>
                     <RaisedButton
                         label="Create Grpoup"
-                        style={style}
+                        style={{margin:'12', width:'100%'}}
                         type="button"
                         onClick={this.handleOpen1}
                     /><br/>
@@ -773,11 +853,21 @@ class Welcome extends Component {
                     </Dialog>
 
                     <Dialog
-                        title="Enter email"
+                        title="Enter Group Name"
                         actions={actions1}
                         modal={true}
                         open={this.state.open1}
                     >
+                        <input
+                            type="text"
+                            value = {this.state.newgroupname}
+                            onChange={(event) => {
+                                this.setState({
+                                    newgroupname: event.target.value
+                                });
+                            }}
+                        /><br/>
+                        <Divider/>
                         {this.state.shareholders.map((shareholder, idx) => (
                             <div className="shareholder">
                                 <TextField
@@ -816,6 +906,7 @@ class Welcome extends Component {
 
                     <Upload
                         // className={'fileupload'}
+                        style={{margin:'12', width:'100%'}}
                         type="file"
                         name="mypic"
                         onChange={this.handleFileUpload}
@@ -856,18 +947,18 @@ class Welcome extends Component {
                                 <RaisedButton
                                     style={style}
                                     label="<"
-                                    disabled={this.state.disable}
+                                    disabled={this.state.shareddisable}
                                     type="button"
                                     onClick={()=> {
-                                        var dir = {dirname: this.state.dirarr.pop()}
-                                        if (this.state.dirarr == 0) {
+                                        var dir = {dirname: this.state.shareddirarr.pop()}
+                                        if (this.state.shareddirarr == 0) {
                                             API.getFiles()
                                                 .then((data) => {
                                                     console.log(data);
                                                     this.setState({
-                                                        files: data.filelist,
-                                                        dirs: data.dirlist,
-                                                        disable:true,
+                                                        sharedfiles: data.filelist,
+                                                        shareddirs: data.dirlist,
+                                                        shareddisable:true,
                                                     });
                                                 });
                                         }
@@ -875,8 +966,8 @@ class Welcome extends Component {
                                             API.getFilesFromDir(dir)
                                                 .then((data) => {
                                                     this.setState({
-                                                        files: data.filelist,
-                                                        dirs: data.dirlist
+                                                        sharedfiles: data.filelist,
+                                                        shareddirs: data.dirlist
 
                                                     })
                                                 });
@@ -884,39 +975,40 @@ class Welcome extends Component {
                                     }}
                                 />
                             </div><br/>
-                            <FileGridList files={this.state.files} dirs={this.state.dirs} handleDirClick={this.handleDirClick}/>
+                            <SharedFileList files={this.state.sharedfiles} dirs={this.state.shareddirs} handleDirClick={this.handlesharedDirClick}/>
+                            {/*<FileGridList files={this.state.files} dirs={this.state.dirs} handleDirClick={this.handleDirClick}/>*/}
                         </div>
                     </div>
 
                 </div>
-                <div style={{float:'top-right'}} >
+                <div style={{float:'left',width:'20%', height:'100%'}} >
                     &nbsp;
                     &nbsp;
                     <strong>
                         {window.sessionStorage.getItem("key")}
                     </strong><RaisedButton
                     label="Logout"
-                    style={style}
+                    style={{margin:'12', width:'100%'}}
                     type="button"
                     onClick={() => this.props.handleLogout(this.state)}
                 />
                     <RaisedButton
                         label="Create Shared Folder"
-                        style={style}
+                        style={{margin:'12', width:'100%'}}
                         primary={true}
                         type="button"
                         onClick={this.handleOpen2}
                     /><br/>
                     <RaisedButton
                         label="Create Folder"
-                        style={style}
+                        style={{margin:'12', width:'100%'}}
                         primary={true}
                         type="button"
                         onClick={this.handleOpen}
                     /><br/>
                     <RaisedButton
                         label="Create Grpoup"
-                        style={style}
+                        style={{margin:'12', width:'100%'}}
                         type="button"
                         onClick={this.handleOpen1}
                     /><br/>
@@ -957,11 +1049,21 @@ class Welcome extends Component {
                     </Dialog>
 
                     <Dialog
-                        title="Enter email"
+                        title="Enter Group Name"
                         actions={actions1}
                         modal={true}
                         open={this.state.open1}
                     >
+                        <input
+                            type="text"
+                            value = {this.state.newgroupname}
+                            onChange={(event) => {
+                                this.setState({
+                                    newgroupname: event.target.value
+                                });
+                            }}
+                        /><br/>
+                        <Divider/>
                         {this.state.shareholders.map((shareholder, idx) => (
                             <div className="shareholder">
                                 <TextField
@@ -1000,6 +1102,7 @@ class Welcome extends Component {
 
                     <Upload
                         // className={'fileupload'}
+                        style={{margin:'12', width:'100%'}}
                         type="file"
                         name="mypic"
                         onChange={this.handleFileUpload}

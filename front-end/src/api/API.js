@@ -87,6 +87,77 @@ export const getFiles = () =>
         return error;
     })
 
+export const getSharedFiles = () =>
+    fetch(`${api}/files/sharedfilelist`,{
+        method: 'POST',
+        credentials:'include',
+
+    }).then(res => {
+        return res.json()
+    })
+        .catch(error =>{
+            console.log(error);
+            return error;
+        })
+
+export const getActivity = () =>
+    fetch(`${api}/files/getactivity`,{
+        method: 'POST',
+        credentials:'include',
+
+    }).then(res => {
+
+        return res.json()
+    })
+        .catch(error =>{
+            console.log(error);
+            return error;
+        })
+
+export const groupMembers = (payload) =>
+    fetch(`${api}/files/groupmembers`,{
+        method: 'POST',
+        headers:{
+            ...headers,
+            'Content-Type':'application/json'
+        },
+        credentials:'include',
+        body:JSON.stringify(payload)
+    }).then(res => {
+        console.log(payload)
+        return res.json()
+    })
+        .catch(error =>{
+            console.log(error);
+            return error;
+        })
+
+export const getStarred = () =>
+    fetch(`${api}/files/starredfilelist`,{
+        method: 'POST',
+        credentials:'include',
+
+    }).then(res => {
+        return res.json()
+    })
+        .catch(error =>{
+            console.log(error);
+            return error;
+        })
+
+export const getGroups = () =>
+    fetch(`${api}/files/grouplist`, {
+        method:'POST',
+        credentials:'include',
+    }).then(res => {
+        console.log("ress");
+        return res.json()
+    })
+        .catch(error =>{
+            console.log(error);
+            return error;
+        })
+
 export const getFilesFromDir = (payload) =>
     fetch(`${api}/files/listfromdir`,{
         method: 'POST',
@@ -137,7 +208,13 @@ export const shareFile = (payload) =>
         },
         credentials:'include',
         body:JSON.stringify(payload)
-    }).then(res => res.status)
+    }).then(res => {
+        console.log("status:141::", res.json())
+        return res.status;
+    }).catch(error => {
+        console.log("This is error");
+        return error;
+    });
 
 export const createSharedGroup = (payload) =>
     fetch(`${api}/files/sharedDir`, {
@@ -182,6 +259,17 @@ export const downloadFile = (payload) =>
         console.log("This is Error");
         return error;
     });
+
+export const starFile = (payload) =>
+    fetch(`${api}/files/starfile`, {
+        method:'POST',
+        headers:{
+            ...headers,
+            'Content-Type':'application/json'
+        },
+        credentials:'include',
+        body:JSON.stringify(payload)
+    }).then(res => res.status)
 
 export const deleteFile = (payload) =>
     fetch(`${api}/files/delete`,{

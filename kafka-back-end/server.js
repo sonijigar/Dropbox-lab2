@@ -71,6 +71,126 @@ consumer.on('message', function (message) {
     }
     else if(data.data.operation == "list"){
         file.list(data.data, function(err, res){
+            console.log("reslist::", res)
+            var payloads = [
+                {
+                    topic:data.replyTo,
+                    messages:JSON.stringify({
+                        correlationId:data.correlationId,
+                        data:res
+                    }),
+                    partition:0
+                }
+            ];
+            producer.send(payloads, function(err, data){
+                console.log("respaylist::", payloads)
+                console.log(data);
+            });
+            return;
+        });
+    }
+    else if(data.data.operation == "sharedfilelist"){
+        file.sharedfilelist(data.data, function(err, resp){
+            console.log("res::", resp)
+            var payloads = [
+                {
+                    topic:data.replyTo,
+                    messages:JSON.stringify({
+                        correlationId:data.correlationId,
+                        data:resp
+                    }),
+                    partition:0
+
+                }
+            ];
+            console.log("res2::", resp)
+            console.log("pay::", payloads.data)
+            producer.send(payloads, function(err, data){
+                console.log("res3::", resp)
+                console.log("payload", payloads);
+            });
+            return;
+        });
+    }
+    else if(data.data.operation == "grouplist"){
+        file.grouplist(data.data, function(err, res){
+            console.log("rereres:", res)
+            var payloads = [
+                {
+                    topic:data.replyTo,
+                    messages:JSON.stringify({
+                        correlationId:data.correlationId,
+                        data:res
+                    }),
+                    partition:0
+                }
+            ];
+            producer.send(payloads, function(err, data){
+                console.log(data);
+            });
+            return;
+        });
+    }
+    else if(data.data.operation == "starfile"){
+        file.starfile(data.data, function(err, res){
+            console.log("rereres:", res)
+            var payloads = [
+                {
+                    topic:data.replyTo,
+                    messages:JSON.stringify({
+                        correlationId:data.correlationId,
+                        data:res
+                    }),
+                    partition:0
+                }
+            ];
+            producer.send(payloads, function(err, data){
+                console.log(data);
+            });
+            return;
+        });
+    }
+    else if(data.data.operation == "starredfilelist"){
+        file.starredfilelist(data.data, function(err, res){
+            console.log("rereres:", res)
+            var payloads = [
+                {
+                    topic:data.replyTo,
+                    messages:JSON.stringify({
+                        correlationId:data.correlationId,
+                        data:res
+                    }),
+                    partition:0
+                }
+            ];
+            producer.send(payloads, function(err, data){
+                console.log(data);
+            });
+            return;
+        });
+    }
+    else if(data.data.operation == "activity"){
+        file.activity(data.data, function(err, res){
+            console.log("rereres:", res)
+            var payloads = [
+                {
+                    topic:data.replyTo,
+                    messages:JSON.stringify({
+                        correlationId:data.correlationId,
+                        data:res
+                    }),
+                    partition:0
+                }
+            ];
+            producer.send(payloads, function(err, data){
+                console.log(data);
+            });
+            return;
+        });
+    }
+    else if(data.data.operation == "groupmembers"){
+        file.groupMembers(data.data, function(err, res){
+
             var payloads = [
                 {
                     topic:data.replyTo,
@@ -183,7 +303,26 @@ consumer.on('message', function (message) {
     }
 
     else if(data.data.operation == "share"){
-        file.sharefile(data.data, function(err, res){
+        file.shareFile(data.data, function(err, res){
+            var payloads = [
+                {
+                    topic:data.replyTo,
+                    messages:JSON.stringify({
+                        correlationId:data.correlationId,
+                        data:res
+                    }),
+                    partition:0
+                }
+            ];
+            producer.send(payloads, function(err, data){
+                console.log("data is", data);
+            });
+            return;
+        });
+    }
+
+    else if(data.data.operation == "group"){
+        file.createGroup(data.data, function(err, res){
             var payloads = [
                 {
                     topic:data.replyTo,

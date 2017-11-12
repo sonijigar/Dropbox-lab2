@@ -1,5 +1,6 @@
 var mongo = require("./mongo")
 var mongoURL = "mongodb://localhost:27017/login";
+var mkdirp = require('mkdirp');
 function handle_request(msg, callback){
     try {
                 mongo.connect(mongoURL, function(){
@@ -37,6 +38,8 @@ function handleSignUp(msg, callback){
             coll.insertOne({username: msg.username, password: msg.password, email:msg.email, phone:msg.phone, activity:[],shared_paths:[]}, function (err, users) {
                 coll.findOne({username: msg.username, password: msg.password}, function (err, user) {
                     if (user) {
+                        mkdirp('./uploads/'+user._id)
+
                         res.code = "200";
                         res.user = user;
                     } else {

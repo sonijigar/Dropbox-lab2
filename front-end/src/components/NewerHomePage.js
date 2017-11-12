@@ -36,7 +36,7 @@ class NewerHomePage extends Component {
                         phone: userdata.phone
                     });
 
-                    this.props.history.push("/signedup");
+                    this.props.history.push("/welcome");
                 } else {
                     this.setState({
                         isLoggedIn: false,

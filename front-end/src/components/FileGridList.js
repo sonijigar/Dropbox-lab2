@@ -45,7 +45,8 @@ class FileGridList extends Component {
         classes: PropTypes.object.isRequired,
         files: PropTypes.array.isRequired,
         dirs: PropTypes.array.isRequired,
-        handleDirClick: PropTypes.func.isRequired
+        handleDirClick: PropTypes.func.isRequired,
+        getFiles: PropTypes.func.isRequired
     };
 
     handleShare = () => {
@@ -73,11 +74,11 @@ class FileGridList extends Component {
     }
 
     //var arrr = this.props.files
-    handleOpen = (lst) => {
-        console.log("lst", lst)
+    handleOpen = (name) => {
+        console.log("lst", name)
         this.setState({
             open: true,
-            sharename:lst
+            sharename:name
         });
     };
 
@@ -117,6 +118,7 @@ class FileGridList extends Component {
             dirs:[],
             shareholders: [{email: '' }],
             sharename:'',
+            col:true,
         };
     }
 
@@ -126,6 +128,20 @@ class FileGridList extends Component {
 
 
     render() {
+        let button = null;
+        if(this.state.col ) {
+            button = <ActionGrade onClick={() => {
+                console.log("star");
+                this.setState({col: false})
+            }} style={{float: 'left', margin: '20px', color: '000FF'}}/>
+        }
+        else{
+            <ActionGrade onClick={() => {
+                console.log("star");
+                this.setState({col: false})
+            }} style={{float: 'left', margin: '20px', color: '000'}}/>
+        }
+
         const actions = [
             <FlatButton
                 label="Cancel"
@@ -140,12 +156,15 @@ class FileGridList extends Component {
         ];
 
         const classes = this.props;
-        // if (this.props.dirs == null && this.props.files == null) {
-        //     return (
-        //         <div></div>
-        //     )
-        // }
-        // else{
+        if (this.props.dirs == undefined && this.props.files == undefined) {
+            return (
+                <div><h2>No such files or directory exists here<br/><br/>
+                    Drag and drop folders here
+                </h2>
+                </div>
+            )
+        }
+        else{
             return (
                 <div className={classes.root}>
                     <List>
@@ -155,37 +174,65 @@ class FileGridList extends Component {
                         </div>
                             {this.props.dirs.map(lst => (
                             <div>
-                                <ListItem
+                                <ListItem style={{float:'left', width:'60%', height:'100%'}}
                                     leftAvatar={<Avatar icon={<FileFolder/>}/>}
-                                    rightIconButton={<IconMenu
-                                        iconButtonElement={<IconButton><MoreVertIcon tooltipPosition="bottom-center"/><IconButton touch={true} tooltipPosition="bottom-center">
-                                            <ActionGrade />
-                                        </IconButton></IconButton>                                        }
-                                        anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-                                        targetOrigin={{horizontal: 'right', vertical: 'top'}}
-
-                                    >
-                                        <MenuItem primaryText="Download"/>
-                                        <MenuItem primaryText="Share" onClick={() => {console.log("list", lst);this.handleOpen(lst)}}/>
-                                        <MenuItem primaryText="Delete" onClick={(event) => {
-                                            var ob = {name: lst}
-                                            API.deleteDir(ob)
-                                                .then((res) => {
-                                                    if (res.status == 200) {
-                                                        window.location.reload();
-                                                    }
-
-                                                })
-                                        }}/>
-                                    </IconMenu>}
-                                    primaryText={lst}
-
                                     onClick={() => {
-                                        var obj = {dirname: lst}
+                                        var obj = {dirname: lst.name}
                                         console.log("it is clicked")
+                                        console.log(obj)
                                         this.props.handleDirClick(obj)
                                     }}
-                                />
+                                >
+                                    <div style={{float:'left', width:'50%', height:'100%'}}>
+                                        {lst.name}
+                                    </div>
+                                </ListItem>
+                                <IconMenu style={{float:'right', marginHight:'20px'}}
+                                    iconButtonElement={<IconButton><MoreVertIcon /></IconButton>                                        }
+                                    anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+                                    targetOrigin={{horizontal: 'right', vertical: 'top'}}
+
+                                >
+                                    <MenuItem primaryText="Download"/>
+                                    <MenuItem primaryText="Share" onClick={() => {console.log("list", lst);this.handleOpen(lst.name)}}/>
+                                    <MenuItem primaryText="Delete" onClick={(event) => {
+                                        var ob = {name: lst.name}
+                                        API.deleteDir(ob)
+                                            .then((res) => {
+                                                if (res.status == 200) {
+                                                    window.location.reload();
+                                                }
+
+                                            })
+                                    }}/>
+                                </IconMenu>
+                                <div style={{float:'left', height:'100%'}}>
+                                    {/*<ActionGrade style={{float: 'left', margin: '20px', color:'000'}} onClick={()=>{console.log("clickkk")}}/>*/}
+                                    { lst.star
+                                        ?<ActionGrade onClick={() => {
+                                            console.log("star");
+                                            this.setState({col: false})
+                                            var ob = {name: lst.name, val:"unstar"}
+                                            API.starFile(ob)
+                                                .then(res => {
+                                                    console.log("starred successfully")
+                                                })
+                                            this.props.getFiles;
+                                        }} style={{float: 'left', margin: '20px', color: '000FF'}}/>
+
+                                        :<ActionGrade onClick={() => {
+
+                                            console.log("star");
+                                            this.setState({col: true})
+                                            var ob = {name: lst.name, val:"star"}
+                                            API.starFile(ob)
+                                                .then(res => {
+                                                    console.log("starred successfully")
+                                                })
+                                            this.props.getFiles;
+                                        }} style={{float: 'left', margin: '20px', color:'000'}}/>
+                                    }
+                                </div>
                                 <Dialog
                                     title="Enter email"
                                     actions={actions}
@@ -213,31 +260,40 @@ class FileGridList extends Component {
                             </div>
                         ))}
                     </List>
+                    <div style={{position:'relative', marginTop:'320px'}}>
                     <List>
+
                         <Subheader inset={true}>Files</Subheader>
                         {this.props.files.map(lst => (
                             <div>
-                                <ListItem
+                                <div >
+                                <ListItem style={{float:'left', width:'60%', height:'100%'}}
                                     leftAvatar={<Avatar icon={<ActionAssignment/>}/>}
-                                    rightIcon={<IconMenu
-                                        iconButtonElement={<IconButton><MoreVertIcon/> <IconButton tooltip="bottom-right" touch={true} tooltipPosition="bottom-right">
-                                            <ActionGrade />
-                                        </IconButton> </IconButton>}
+
+
+                                ><div style={{float:'left', width:'50%', height:'100%'}}>
+                                    {lst.name}
+
+                                </div>
+
+                                </ListItem>
+                                    <IconMenu style={{float:'right', marginHight:'20px'}}
+                                        iconButtonElement={<IconButton><MoreVertIcon/> </IconButton>}
                                         anchorOrigin={{horizontal: 'right', vertical: 'top'}}
                                         targetOrigin={{horizontal: 'right', vertical: 'top'}}
                                     >
                                         <MenuItem primaryText="Download" onClick={(event) => {
 
-                                            var ob = {name: lst}
+                                            var ob = {name: lst.name}
                                             API.downloadFile(ob)
                                                 .then((res) => {
                                                     console.log("clicked", Buffer.from(res.data));
                                                     fileDownload(Buffer.from(res.data.data), res.name);
                                                 })
                                         }}/>
-                                        <MenuItem primaryText="Share" onClick={() => {console.log("list", lst);this.handleOpen(lst)}}/>
+                                        <MenuItem primaryText="Share" onClick={() => {this.handleOpen(lst.path+lst.name)}}/>
                                         <MenuItem primaryText="Delete" onClick={(event) => {
-                                            var ob = {name: lst}
+                                            var ob = {name: lst.name}
                                             API.deleteFile(ob)
                                                 .then((res) => {
                                                     if (res.status == 200) {
@@ -246,17 +302,46 @@ class FileGridList extends Component {
 
                                                 })
                                         }}/>
-                                    </IconMenu>}
-                                    primaryText={lst}
-                                />
-                                <Divider inset={true}/>
+                                    </IconMenu>
+                                    {/*{button}*/}
+
+                                    { lst.star
+                                    ?<ActionGrade onClick={() => {
+                                        console.log("star");
+                                        this.setState({col: false})
+                                        var ob = {name: lst.name, val:"unstar"}
+                                        API.starFile(ob)
+                                            .then(res => {
+                                                console.log("starred successfully")
+                                            })
+                                        this.props.getFiles;
+                                    }} style={{float: 'left', margin: '20px', color: '000FF'}}/>
+
+                                    :<ActionGrade onClick={() => {
+
+                                            console.log("star");
+                                            this.setState({col: true})
+                                            var ob = {name: lst.name, val:"star"}
+                                            API.starFile(ob)
+                                                .then(res => {
+                                                    console.log("starred successfully")
+                                                })
+                                            this.props.getFiles;
+                                        }} style={{float: 'left', margin: '20px', color:'000'}}/>
+                                    }
+                                    <div>
+                                    <Divider inset={true}/>
+                                    </div>
+                                </div>
+
                             </div>
                         ))}
                     </List>
+                    </div>
 
                 </div>
             );
-    //}
+    }
     }
 
 
