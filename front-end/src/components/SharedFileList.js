@@ -63,7 +63,7 @@ class SharedFileList extends Component {
         const classes = this.props;
         if (this.props.files == undefined) {
             return (
-                <div><h2>No Groups Exists<br/><br/>
+                <div><h2>No Shared Files or Folders<br/><br/>
                 </h2>
                 </div>
             )

@@ -158,8 +158,8 @@ class FileGridList extends Component {
         const classes = this.props;
         if (this.props.dirs == undefined && this.props.files == undefined) {
             return (
-                <div><h2>No such files or directory exists here<br/><br/>
-                    Drag and drop folders here
+                <div><h2>No files or directory exists<br/><br/>
+                        Drag and drop folders here
                 </h2>
                 </div>
             )
@@ -260,7 +260,7 @@ class FileGridList extends Component {
                             </div>
                         ))}
                     </List>
-                    <div style={{position:'relative', marginTop:'320px'}}>
+                    <div style={{position:'relative', marginTop:'200px'}}>
                     <List>
 
                         <Subheader inset={true}>Files</Subheader>

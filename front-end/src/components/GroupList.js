@@ -135,7 +135,7 @@ class GroupList extends Component {
         if (this.props.groups == undefined || this.props.groups.length == 0) {
             return (
                 <div>{console.log(this.props.groups)}
-                    <h2>No Groups Exists<br/><br/>
+                    <h2>No Groups Exist<br/><br/>
                 </h2>
                 </div>
             )
