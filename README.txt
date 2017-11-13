@@ -1,5 +1,7 @@
 Follow the steps on the terminal to start the servers:
 
+Run mongodb
+
 Back-end server
 	1. cd back-end
 	2. npm install
@@ -30,3 +32,4 @@ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 -
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic file_topic
 
 or run Topic.sh file to create topics
+
